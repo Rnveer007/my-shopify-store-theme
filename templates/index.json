@@ -326,9 +326,18 @@
       "type": "cx-featured-product",
       "name": "CX Featured Product",
       "settings": {
-        "selected_product": "t-shirt",
-        "mt": 40,
-        "mb": 40
+        "title": "Featured Products",
+        "product_list": [
+          "t-shirt"
+        ],
+        "collection": "",
+        "products_to_show": 8,
+        "cols_desktop": 4,
+        "mobile_layout": "slider",
+        "text_align": "center",
+        "show_name": true,
+        "show_price": true,
+        "bg_color": "#ffffff"
       }
     }
   },
