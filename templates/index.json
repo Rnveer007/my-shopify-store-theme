@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "hero_jVaWmY": {
       "type": "hero",
@@ -65,6 +66,7 @@
         "custom_mobile_media": false,
         "media_type_1_mobile": "image",
         "media_type_2_mobile": "image",
+        "link": "",
         "open_in_new_tab": false,
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -281,10 +283,45 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "cx_custom_heading_U7hWAw": {
+      "type": "cx-custom-heading",
+      "name": "CX Custom Heading",
+      "settings": {
+        "bg_color": "#ffffff",
+        "overlay_opacity": 0,
+        "text_align": "center",
+        "title": "Main Title",
+        "title_color": "#000000",
+        "title_size": 60,
+        "title_size_mobile": 30,
+        "title_mt": 0,
+        "title_mb": 10,
+        "subtitle": "Sub-Heading",
+        "subtitle_color": "#000000",
+        "subtitle_size": 30,
+        "subtitle_size_mobile": 20,
+        "subtitle_mt": 0,
+        "subtitle_mb": 16,
+        "paragraph_text": "Your brand story goes here.",
+        "para_color": "#000000",
+        "para_size": 18,
+        "para_size_mobile": 14,
+        "para_mt": 0,
+        "para_mb": 20,
+        "btn_label": "Shop Now",
+        "btn_link": "",
+        "btn_color": "#000000",
+        "btn_text_color": "#ffffff",
+        "btn_mt": 10,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
     "hero_jVaWmY",
-    "product_list_fa6P9H"
+    "product_list_fa6P9H",
+    "cx_custom_heading_U7hWAw"
   ]
 }
