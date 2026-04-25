@@ -333,7 +333,7 @@
         "collection": "",
         "products_to_show": 8,
         "cols_desktop": 4,
-        "mobile_layout": "slider",
+        "mobile_layout": "column",
         "text_align": "center",
         "show_name": true,
         "show_price": true,
