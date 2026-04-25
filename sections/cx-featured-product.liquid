@@ -1,103 +1,132 @@
-<div class="cx-featured-product" id="product-{{ section.id }}">
-  {% assign product = section.settings.selected_product %}
-  
-  {% if product != blank %}
-    <div class="product-wrapper">
-      <div class="product-grid">
-        
-        <div class="product-image-box">
-          {% if product.compare_at_price > product.price %}
-            <span class="sale-badge">SALE</span>
-          {% endif %}
-          <img src="{{ product.featured_image | image_url: width: 1000 }}" alt="{{ product.title }}" loading="lazy">
-        </div>
-        
-        <div class="product-details-box">
-          <h2 class="p-title">{{ product.title }}</h2>
-          
-          <div class="p-price-wrapper">
-            <span class="current-price">{{ product.price | money }}</span>
-            {% if product.compare_at_price > product.price %}
-              <span class="old-price">{{ product.compare_at_price | money }}</span>
-            {% endif %}
-          </div>
-          
-          <div class="p-description">
-            {{ product.description | strip_html | truncate: 180 }}
-          </div>
+<div class="cx-product-grid-section" id="section-{{ section.id }}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <h2 class="section-main-title">{{ section.settings.title }}</h2>
+    {% endif %}
 
-          {% form 'product', product %}
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-            <button type="submit" class="p-add-btn">
-              {% if product.available %}
-                ADD TO CART
-              {% else %}
-                OUT OF STOCK
+    <div class="cx-grid">
+      {%- assign selected_collection = section.settings.collection -%}
+      
+      {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
+        <div class="cx-product-card">
+          <a href="{{ product.url }}" class="card-link">
+            <div class="card-image-wrapper">
+              {% if product.compare_at_price > product.price %}
+                <span class="grid-sale-badge">SALE</span>
               {% endif %}
-            </button>
-          {% endform %}
-          
-          <a href="{{ product.url }}" class="view-details">View Full Details →</a>
-        </div>
+              <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title }}" loading="lazy" class="primary-img">
+              
+              {% if product.images[1] != blank %}
+                <img src="{{ product.images[1] | image_url: width: 600 }}" alt="{{ product.title }}" loading="lazy" class="secondary-img">
+              {% endif %}
+              
+              <div class="quick-add-overlay">
+                <span>Quick View</span>
+              </div>
+            </div>
 
-      </div>
+            <div class="card-info">
+              <h3 class="card-title">{{ product.title }}</h3>
+              <div class="card-price">
+                <span class="price-current">{{ product.price | money }}</span>
+                {% if product.compare_at_price > product.price %}
+                  <span class="price-old">{{ product.compare_at_price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        </div>
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+           <div class="cx-product-card placeholder">
+             <div class="card-image-wrapper">{{ 'product-' | append: i | placeholder_svg_tag }}</div>
+             <div class="card-info">
+               <h3 class="card-title">Sample Product {{ i }}</h3>
+               <div class="card-price"><span class="price-current">Rs. 999.00</span></div>
+             </div>
+           </div>
+        {%- endfor -%}
+      {%- endfor -%}
     </div>
-  {% else %}
-    <div class="placeholder-info">
-      <p>Select a product to display the featured section.</p>
-    </div>
-  {% endif %}
+  </div>
 </div>
 
 <style>
-  #product-{{ section.id }} {
-    margin-top: {{ section.settings.mt }}px;
-    margin-bottom: {{ section.settings.mb }}px;
-    padding: 40px 20px;
-    background: #f9f9f9;
+  #section-{{ section.id }} {
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color }};
   }
-  .product-wrapper { max-width: 1100px; margin: 0 auto; }
-  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-  
-  .product-image-box { position: relative; border-radius: 8px; overflow: hidden; background: #fff; }
-  .product-image-box img { width: 100%; display: block; transition: transform 0.5s ease; }
-  .product-image-box:hover img { transform: scale(1.05); }
-  
-  .sale-badge { 
-    position: absolute; top: 15px; left: 15px; background: #ff4444; color: #fff; 
-    padding: 5px 15px; font-size: 12px; font-weight: bold; z-index: 2; border-radius: 3px;
+  .container { max-width: 1400px; margin: 0 auto; }
+  .section-main-title { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Grid Logic */
+  .cx-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    gap: 20px;
   }
 
-  .p-title { font-size: 32px; margin: 0 0 15px 0; color: #222; }
-  .p-price-wrapper { margin-bottom: 20px; font-size: 24px; }
-  .current-price { font-weight: bold; color: #000; }
-  .old-price { text-decoration: line-through; color: #999; margin-left: 10px; font-size: 18px; }
+  /* Card Design */
+  .cx-product-card { position: relative; transition: all 0.3s ease; }
+  .card-link { text-decoration: none; color: inherit; }
   
-  .p-description { line-height: 1.6; color: #555; margin-bottom: 25px; }
-  
-  .p-add-btn { 
-    width: 100%; padding: 18px; background: #000; color: #fff; border: none; 
-    cursor: pointer; font-weight: bold; letter-spacing: 1px; transition: opacity 0.3s;
+  .card-image-wrapper { 
+    position: relative; 
+    aspect-ratio: 1 / 1.2; 
+    overflow: hidden; 
+    background: #f5f5f5;
+    border-radius: 8px;
   }
-  .p-add-btn:hover { opacity: 0.8; }
   
-  .view-details { display: inline-block; margin-top: 15px; text-decoration: none; color: #000; font-size: 14px; border-bottom: 1px solid #000; }
+  .card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s ease; }
+  .secondary-img { position: absolute; top: 0; left: 0; opacity: 0; }
+  
+  .cx-product-card:hover .primary-img { opacity: 0; }
+  .cx-product-card:hover .secondary-img { opacity: 1; }
 
-  @media screen and (max-width: 768px) {
-    .product-grid { grid-template-columns: 1fr; gap: 30px; }
-    .p-title { font-size: 24px; }
+  .quick-add-overlay {
+    position: absolute; bottom: -50px; left: 0; width: 100%; 
+    background: rgba(255,255,255,0.9); padding: 12px; text-align: center;
+    transition: bottom 0.3s ease; font-weight: bold; font-size: 13px;
+  }
+  .cx-product-card:hover .quick-add-overlay { bottom: 0; }
+
+  .grid-sale-badge {
+    position: absolute; top: 10px; right: 10px; background: #000; color: #fff;
+    padding: 4px 12px; font-size: 11px; font-weight: bold; z-index: 2;
+  }
+
+  .card-info { padding: 15px 5px; text-align: {{ section.settings.text_align }}; }
+  .card-title { font-size: 15px; margin: 0 0 8px 0; font-weight: 500; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .price-current { font-weight: 700; color: #000; font-size: 16px; }
+  .price-old { color: #999; text-decoration: line-through; font-size: 13px; margin-left: 8px; }
+
+  @media (max-width: 1024px) {
+    .cx-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .cx-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .section-main-title { font-size: 1.8rem; }
   }
 </style>
 
 {% schema %}
 {
-  "name": "CX Featured Product",
+  "name": "CX Modern Grid",
   "settings": [
-    { "type": "product", "id": "selected_product", "label": "Select Product" },
-    { "type": "header", "content": "Spacing" },
-    { "type": "range", "id": "mt", "min": 0, "max": 100, "step": 5, "label": "Margin Top", "default": 40 },
-    { "type": "range", "id": "mb", "min": 0, "max": 100, "step": 5, "label": "Margin Bottom", "default": 40 }
+    { "type": "text", "id": "title", "label": "Heading", "default": "New Arrivals" },
+    { "type": "collection", "id": "collection", "label": "Select Collection" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "label": "Products to show", "default": 4 },
+    { "type": "range", "id": "columns_desktop", "min": 3, "max": 6, "step": 1, "label": "Columns on Desktop", "default": 4 },
+    { "type": "select", "id": "text_align", "label": "Text Alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ], "default": "left" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "header", "content": "Section Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 5, "label": "Padding Top", "default": 50 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 5, "label": "Padding Bottom", "default": 50 }
   ],
-  "presets": [ { "name": "CX Featured Product" } ]
+  "presets": [ { "name": "CX Modern Grid" } ]
 }
 {% endschema %}
