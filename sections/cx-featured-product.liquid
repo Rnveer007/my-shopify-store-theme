@@ -2,49 +2,102 @@
   {% assign product = section.settings.selected_product %}
   
   {% if product != blank %}
-    <div class="product-grid">
-      <div class="product-image">
-        <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}">
-      </div>
-      
-      <div class="product-info">
-        <h2>{{ product.title }}</h2>
-        <p class="price">{{ product.price | money }}</p>
+    <div class="product-wrapper">
+      <div class="product-grid">
         
-        <div class="product-description">
-          {{ product.description | truncate: 150 }}
+        <div class="product-image-box">
+          {% if product.compare_at_price > product.price %}
+            <span class="sale-badge">SALE</span>
+          {% endif %}
+          <img src="{{ product.featured_image | image_url: width: 1000 }}" alt="{{ product.title }}" loading="lazy">
+        </div>
+        
+        <div class="product-details-box">
+          <h2 class="p-title">{{ product.title }}</h2>
+          
+          <div class="p-price-wrapper">
+            <span class="current-price">{{ product.price | money }}</span>
+            {% if product.compare_at_price > product.price %}
+              <span class="old-price">{{ product.compare_at_price | money }}</span>
+            {% endif %}
+          </div>
+          
+          <div class="p-description">
+            {{ product.description | strip_html | truncate: 180 }}
+          </div>
+
+          {% form 'product', product %}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button type="submit" class="p-add-btn">
+              {% if product.available %}
+                ADD TO CART
+              {% else %}
+                OUT OF STOCK
+              {% endif %}
+            </button>
+          {% endform %}
+          
+          <a href="{{ product.url }}" class="view-details">View Full Details →</a>
         </div>
 
-        <button class="add-to-cart-btn">Add to Cart</button>
       </div>
     </div>
   {% else %}
     <div class="placeholder-info">
-      <p>Please select a product from the settings.</p>
+      <p>Select a product to display the featured section.</p>
     </div>
   {% endif %}
 </div>
+
+<style>
+  #product-{{ section.id }} {
+    margin-top: {{ section.settings.mt }}px;
+    margin-bottom: {{ section.settings.mb }}px;
+    padding: 40px 20px;
+    background: #f9f9f9;
+  }
+  .product-wrapper { max-width: 1100px; margin: 0 auto; }
+  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  
+  .product-image-box { position: relative; border-radius: 8px; overflow: hidden; background: #fff; }
+  .product-image-box img { width: 100%; display: block; transition: transform 0.5s ease; }
+  .product-image-box:hover img { transform: scale(1.05); }
+  
+  .sale-badge { 
+    position: absolute; top: 15px; left: 15px; background: #ff4444; color: #fff; 
+    padding: 5px 15px; font-size: 12px; font-weight: bold; z-index: 2; border-radius: 3px;
+  }
+
+  .p-title { font-size: 32px; margin: 0 0 15px 0; color: #222; }
+  .p-price-wrapper { margin-bottom: 20px; font-size: 24px; }
+  .current-price { font-weight: bold; color: #000; }
+  .old-price { text-decoration: line-through; color: #999; margin-left: 10px; font-size: 18px; }
+  
+  .p-description { line-height: 1.6; color: #555; margin-bottom: 25px; }
+  
+  .p-add-btn { 
+    width: 100%; padding: 18px; background: #000; color: #fff; border: none; 
+    cursor: pointer; font-weight: bold; letter-spacing: 1px; transition: opacity 0.3s;
+  }
+  .p-add-btn:hover { opacity: 0.8; }
+  
+  .view-details { display: inline-block; margin-top: 15px; text-decoration: none; color: #000; font-size: 14px; border-bottom: 1px solid #000; }
+
+  @media screen and (max-width: 768px) {
+    .product-grid { grid-template-columns: 1fr; gap: 30px; }
+    .p-title { font-size: 24px; }
+  }
+</style>
 
 {% schema %}
 {
   "name": "CX Featured Product",
   "settings": [
-    {
-      "type": "product",
-      "id": "selected_product",
-      "label": "Select Product"
-    },
-    {
-      "type": "header",
-      "content": "Spacing Controls"
-    },
-    { "type": "range", "id": "mt", "min": 0, "max": 100, "step": 5, "label": "Margin Top", "default": 20 },
-    { "type": "range", "id": "mb", "min": 0, "max": 100, "step": 5, "label": "Margin Bottom", "default": 20 }
+    { "type": "product", "id": "selected_product", "label": "Select Product" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "mt", "min": 0, "max": 100, "step": 5, "label": "Margin Top", "default": 40 },
+    { "type": "range", "id": "mb", "min": 0, "max": 100, "step": 5, "label": "Margin Bottom", "default": 40 }
   ],
-  "presets": [
-    {
-      "name": "CX Featured Product"
-    }
-  ]
+  "presets": [ { "name": "CX Featured Product" } ]
 }
 {% endschema %}
