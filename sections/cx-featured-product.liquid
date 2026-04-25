@@ -1,0 +1,50 @@
+<div class="cx-featured-product" id="product-{{ section.id }}">
+  {% assign product = section.settings.selected_product %}
+  
+  {% if product != blank %}
+    <div class="product-grid">
+      <div class="product-image">
+        <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}">
+      </div>
+      
+      <div class="product-info">
+        <h2>{{ product.title }}</h2>
+        <p class="price">{{ product.price | money }}</p>
+        
+        <div class="product-description">
+          {{ product.description | truncate: 150 }}
+        </div>
+
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
+    </div>
+  {% else %}
+    <div class="placeholder-info">
+      <p>Please select a product from the settings.</p>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "CX Featured Product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "selected_product",
+      "label": "Select Product"
+    },
+    {
+      "type": "header",
+      "content": "Spacing Controls"
+    },
+    { "type": "range", "id": "mt", "min": 0, "max": 100, "step": 5, "label": "Margin Top", "default": 20 },
+    { "type": "range", "id": "mb", "min": 0, "max": 100, "step": 5, "label": "Margin Bottom", "default": 20 }
+  ],
+  "presets": [
+    {
+      "name": "CX Featured Product"
+    }
+  ]
+}
+{% endschema %}
