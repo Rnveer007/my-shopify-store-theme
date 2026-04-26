@@ -1,8 +1,5 @@
-{%- comment -%} CSS Render from Snippets {%- endcomment -%}
+{%- comment -%} CSS Render {%- endcomment -%}
 {% render 'cx-custom-heading-css', section: section %}
-
-{%- comment -%} JS Connect {%- endcomment -%}
-<script src="{{ 'cx-custom-heading.js' | asset_url }}" defer="defer"></script>
 
 <div class="custom-hero-section" id="hero-{{ section.id }}">
   <div class="hero-image-wrapper">
@@ -16,59 +13,43 @@
   </div>
 
   <div class="hero-content">
-    {%- comment -%} 🟢 HTML Block logic {%- endcomment -%}
-    {%- assign custom_html = section.settings.custom_html | strip -%}
-    {% if custom_html != blank %}
-      <div class="hero-custom-html">
-        {{ custom_html }}
-      </div>
-    {% endif %}
-
-    {%- comment -%} 🟢 Title Block logic {%- endcomment -%}
-    {%- assign title = section.settings.title | strip -%}
-    {% if title != blank %}
-      <h1 class="hero-title" style="
-        margin-top: {{ section.settings.title_mt }}px; 
-        margin-bottom: {{ section.settings.title_mb }}px;
-        padding-top: {{ section.settings.title_pt }}px;
-        padding-bottom: {{ section.settings.title_pb }}px;
-      ">
-        {{ title }}
-      </h1>
-    {% endif %}
-
-    {%- comment -%} 🟢 Sub-Title Block logic (Strict Check) {%- endcomment -%}
-    {%- assign subtitle = section.settings.subtitle | strip -%}
-    {% if subtitle != blank %}
-      <h2 class="hero-subtitle" style="
+    {%- comment -%} SUBTITLE FIXED LOGIC {%- endcomment -%}
+    {%- assign subtitle_text = section.settings.subtitle | strip_html | strip -%}
+    {% if subtitle_text != blank %}
+      <div class="hero-subtitle-wrapper" style="
         margin-top: {{ section.settings.subtitle_mt }}px;
         margin-bottom: {{ section.settings.subtitle_mb }}px;
         padding-top: {{ section.settings.subtitle_pt }}px;
         padding-bottom: {{ section.settings.subtitle_pb }}px;
       ">
-        {{ subtitle }}
-      </h2>
+        <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
+      </div>
     {% endif %}
 
-    {%- comment -%} 🟢 Paragraph Block logic {%- endcomment -%}
-    {%- assign paragraph = section.settings.paragraph_text | strip -%}
-    {% if paragraph != blank %}
-      <p class="hero-paragraph" style="
+    {%- comment -%} TITLE FIXED LOGIC {%- endcomment -%}
+    {%- assign title_text = section.settings.title | strip_html | strip -%}
+    {% if title_text != blank %}
+      <div class="hero-title-wrapper" style="
+        margin-top: {{ section.settings.title_mt }}px;
+        margin-bottom: {{ section.settings.title_mb }}px;
+      ">
+        <h1 class="hero-title">{{ section.settings.title }}</h1>
+      </div>
+    {% endif %}
+
+    {%- comment -%} PARAGRAPH FIXED LOGIC {%- endcomment -%}
+    {%- assign para_text = section.settings.paragraph_text | strip_html | strip -%}
+    {% if para_text != blank %}
+      <div class="hero-para-wrapper" style="
         margin-top: {{ section.settings.para_mt }}px;
         margin-bottom: {{ section.settings.para_mb }}px;
-        padding-top: {{ section.settings.para_pt }}px;
-        padding-bottom: {{ section.settings.para_pb }}px;
       ">
-        {{ paragraph }}
-      </p>
+        <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
+      </div>
     {% endif %}
-    
-    {%- comment -%} 🟢 Button Block logic {%- endcomment -%}
-    {%- assign btn_label = section.settings.btn_label | strip -%}
-    {% if btn_label != blank %}
-      <a href="{{ section.settings.btn_link }}" class="hero-btn" style="margin-top: {{ section.settings.btn_mt }}px;">
-        {{ btn_label }}
-      </a>
+
+    {% if section.settings.btn_label != blank %}
+      <a href="{{ section.settings.btn_link }}" class="hero-btn" style="margin-top: {{ section.settings.btn_mt }}px;">{{ section.settings.btn_label }}</a>
     {% endif %}
   </div>
 </div>

@@ -1,47 +1,18 @@
 <style>
   #hero-{{ section.id }} { 
-    position: relative; 
-    width: 100%; 
-    min-height: auto; 
+    position: relative; width: 100%; min-height: auto;
     background-color: {{ section.settings.bg_color }}; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    overflow: hidden;
-    padding: 20px 0; 
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    padding: 40px 0;
   }
-
   .hero-image-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
   .hero-img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
   .hero-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2; }
-  
-  .hero-content { position: relative; z-index: 5; width: 80%; text-align: {{ section.settings.text_align }}; }
+  .hero-content { position: relative; z-index: 5; width: 90%; text-align: {{ section.settings.text_align }}; }
 
-  /* Custom HTML (Inline handle nahi kiya tha isliye yahan rehne diya) */
-  .hero-custom-html {
-    margin-top: {{ section.settings.html_mt }}px;
-    margin-bottom: {{ section.settings.html_mb }}px;
-    padding-top: {{ section.settings.html_pt }}px;
-    padding-bottom: {{ section.settings.html_pb }}px;
-    word-break: break-word;
-  }
-
-  /* Title aur Para ke liye margin/padding humne Inline move kar di hai, isliye yahan se hata sakte ho */
-  .hero-title { 
-    color: {{ section.settings.title_color }};
-    font-weight: bold; line-height: 1.1;
-  }
-  
-  .hero-subtitle { 
-    color: {{ section.settings.subtitle_color }};
-    line-height: 1.2;
-    /* 🟢 Sab spacing yahan se delete kar di hai */
-  }
-
-  .hero-paragraph { 
-    color: {{ section.settings.para_color }};
-    line-height: 1.4;
-  }
+  .hero-title { color: {{ section.settings.title_color }}; font-weight: bold; line-height: 1.1; margin: 0; }
+  .hero-subtitle { color: {{ section.settings.subtitle_color }}; line-height: 1.2; margin: 0; }
+  .hero-paragraph { color: {{ section.settings.para_color }}; line-height: 1.4; margin: 0; }
 
   @media screen and (min-width: 751px) {
     .hero-title { font-size: {{ section.settings.title_size }}px; }
@@ -50,7 +21,6 @@
     .desktop-only { display: block; }
     .mobile-only { display: none; }
   }
-
   @media screen and (max-width: 750px) {
     .hero-title { font-size: {{ section.settings.title_size_mobile }}px; }
     .hero-subtitle { font-size: {{ section.settings.subtitle_size_mobile }}px; }
@@ -58,13 +28,5 @@
     .desktop-only { display: none; }
     .mobile-only { display: block; }
   }
-  
-  .hero-btn {
-    display: inline-block; padding: 14px 35px;
-    background-color: {{ section.settings.btn_color }};
-    color: {{ section.settings.btn_text_color }} !important;
-    text-decoration: none; border-radius: 4px; font-weight: bold;
-    transition: opacity 0.3s ease;
-  }
-  .hero-btn:hover { opacity: 0.8; }
+  .hero-btn { display: inline-block; padding: 14px 35px; background: {{ section.settings.btn_color }}; color: {{ section.settings.btn_text_color }} !important; text-decoration: none; border-radius: 4px; font-weight: bold; }
 </style>
