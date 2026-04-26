@@ -1,9 +1,14 @@
 {%- style -%}
   #cx-split-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
+    /* Padding control slider se manage ho rahi hai */
     padding: {{ section.settings.section_padding_t }}px 0 {{ section.settings.section_padding_b }}px 0;
     position: relative;
-    z-index: 1; /* Header se niche rakhne ke liye lower z-index */
+    z-index: 0 !important;
+    overflow: hidden;
+    /* 🟢 FIX 1: Ensure section doesn't take extra space */
+    min-height: auto !important; 
+    display: block;
   }
 
   .cx-split-container {
@@ -11,67 +16,24 @@
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    /* 🟢 FIX 2: Align items to start if they look too stretched */
+    align-items: center; 
     gap: 40px;
     flex-direction: {% if section.settings.img_position == 'right' %}row-reverse{% else %}row{% endif %};
   }
 
-  .cx-split-image, .cx-split-content {
-    flex: 1;
-    min-width: 300px;
+  /* 🟢 FIX 3: Headings ki default browser margin zero karo */
+  .cx-split-title, .cx-split-subtitle {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
 
-  /* Image Display Logic Fix */
+  /* Image height fix */
   .cx-split-image img {
+    max-height: 600px; /* Ek limit set kar dete hain */
     width: 100%;
-    height: auto;
-    display: block;
-    border-radius: {{ section.settings.img_rounded }}px;
     object-fit: cover;
-  }
-
-  /* 🟢 DOUBLE IMAGE FIX START */
-  .desktop-img { display: block; }
-  .mobile-img { display: none; }
-
-  @media screen and (max-width: 750px) {
-    .desktop-img { display: none; }
-    .mobile-img { display: block; }
-    
-    /* Agar mobile image blank ho toh desktop dikhao fallback ke liye */
-    {% if section.settings.image_mobile == blank %}
-       .desktop-img { display: block !important; }
-       .mobile-img { display: none !important; }
-    {% endif %}
-
-    .cx-split-container {
-      flex-direction: column{% if section.settings.mob_img_first == false %}-reverse{% endif %};
-      gap: 20px;
-    }
-  }
-  /* 🟢 DOUBLE IMAGE FIX END */
-
-  .cx-split-content { text-align: {{ section.settings.text_align }}; }
-  .cx-split-title { margin: 0; color: {{ section.settings.title_color }}; font-weight: bold; line-height: 1.2; }
-  .cx-split-subtitle { margin: 0; color: {{ section.settings.subtitle_color }}; line-height: 1.4; }
-
-  @media screen and (min-width: 751px) {
-    .cx-split-title { font-size: {{ section.settings.title_size }}px; }
-    .cx-split-subtitle { font-size: {{ section.settings.subtitle_size }}px; }
-  }
-  @media screen and (max-width: 750px) {
-    .cx-split-title { font-size: {{ section.settings.title_size_mob }}px; }
-    .cx-split-subtitle { font-size: {{ section.settings.subtitle_size_mob }}px; }
-  }
-
-  .cx-split-btn {
-    display: inline-block;
-    padding: 12px 30px;
-    font-weight: bold;
-    border-radius: 4px;
-    background-color: {{ section.settings.btn_bg }};
-    color: {{ section.settings.btn_text_color }} !important;
-    text-decoration: none;
+    border-radius: {{ section.settings.img_rounded }}px;
   }
 {%- endstyle -%}
 
