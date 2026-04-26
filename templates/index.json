@@ -289,7 +289,6 @@
       "name": "CX Custom Heading",
       "settings": {
         "bg_color": "#ffffff",
-        "overlay_opacity": 0,
         "text_align": "center",
         "custom_html": "",
         "html_mt": 0,
@@ -311,20 +310,35 @@
         "subtitle_mt": 0,
         "subtitle_mb": 2,
         "subtitle_pt": 0,
-        "subtitle_pb": 0,
-        "paragraph_text": "",
-        "para_color": "#000000",
-        "para_size": 23,
-        "para_size_mobile": 14,
-        "para_mt": 0,
-        "para_mb": 4,
-        "para_pt": 0,
-        "para_pb": 0,
-        "btn_label": "",
+        "subtitle_pb": 0
+      }
+    },
+    "cx_split_feature_Lri4X8": {
+      "type": "cx-split-feature",
+      "name": "CX-Split-Feature",
+      "settings": {
+        "bg_color": "#ffffff",
+        "img_position": "left",
+        "mob_img_first": true,
+        "section_padding_t": 40,
+        "section_padding_b": 40,
+        "image_desktop": "shopify://shop_images/cafe.avif",
+        "img_rounded": 0,
+        "text_align": "left",
+        "title": "Our Story",
+        "title_color": "#000000",
+        "title_size": 32,
+        "title_size_mob": 24,
+        "title_mb": 10,
+        "subtitle": "Share details about your brand.",
+        "subtitle_color": "#444444",
+        "subtitle_size": 18,
+        "subtitle_size_mob": 16,
+        "subtitle_mb": 15,
+        "btn_label": "Learn More",
         "btn_link": "",
-        "btn_color": "#000000",
-        "btn_text_color": "#ffffff",
-        "btn_mt": 0
+        "btn_bg": "#000000",
+        "btn_text_color": "#ffffff"
       }
     },
     "cx_featured_product_FdWEtz": {
@@ -350,6 +364,7 @@
     "hero_jVaWmY",
     "product_list_fa6P9H",
     "cx_custom_heading_U7hWAw",
+    "cx_split_feature_Lri4X8",
     "cx_featured_product_FdWEtz"
   ]
 }
