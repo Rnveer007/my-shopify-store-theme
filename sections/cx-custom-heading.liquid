@@ -16,34 +16,59 @@
   </div>
 
   <div class="hero-content">
-    {% if section.settings.custom_html != blank %}
+    {%- comment -%} 🟢 HTML Block logic {%- endcomment -%}
+    {%- assign custom_html = section.settings.custom_html | strip -%}
+    {% if custom_html != blank %}
       <div class="hero-custom-html">
-        {{ section.settings.custom_html }}
+        {{ custom_html }}
       </div>
     {% endif %}
 
-    {%- comment -%} 🟢 Conditional Rendering: Spacing Bug Fix {%- endcomment -%}
-    {% if section.settings.title != blank %}
-      <h1 class="hero-title">{{ section.settings.title }}</h1>
+    {%- comment -%} 🟢 Title Block logic {%- endcomment -%}
+    {%- assign title = section.settings.title | strip -%}
+    {% if title != blank %}
+      <h1 class="hero-title" style="
+        margin-top: {{ section.settings.title_mt }}px; 
+        margin-bottom: {{ section.settings.title_mb }}px;
+        padding-top: {{ section.settings.title_pt }}px;
+        padding-bottom: {{ section.settings.title_pb }}px;
+      ">
+        {{ title }}
+      </h1>
     {% endif %}
 
- {% if section.settings.subtitle != blank %}
+    {%- comment -%} 🟢 Sub-Title Block logic (Strict Check) {%- endcomment -%}
+    {%- assign subtitle = section.settings.subtitle | strip -%}
+    {% if subtitle != blank %}
       <h2 class="hero-subtitle" style="
         margin-top: {{ section.settings.subtitle_mt }}px;
         margin-bottom: {{ section.settings.subtitle_mb }}px;
         padding-top: {{ section.settings.subtitle_pt }}px;
         padding-bottom: {{ section.settings.subtitle_pb }}px;
       ">
-        {{ section.settings.subtitle }}
+        {{ subtitle }}
       </h2>
     {% endif %}
 
-    {% if section.settings.paragraph_text != blank %}
-      <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
+    {%- comment -%} 🟢 Paragraph Block logic {%- endcomment -%}
+    {%- assign paragraph = section.settings.paragraph_text | strip -%}
+    {% if paragraph != blank %}
+      <p class="hero-paragraph" style="
+        margin-top: {{ section.settings.para_mt }}px;
+        margin-bottom: {{ section.settings.para_mb }}px;
+        padding-top: {{ section.settings.para_pt }}px;
+        padding-bottom: {{ section.settings.para_pb }}px;
+      ">
+        {{ paragraph }}
+      </p>
     {% endif %}
     
-    {% if section.settings.btn_label != blank %}
-      <a href="{{ section.settings.btn_link }}" class="hero-btn">{{ section.settings.btn_label }}</a>
+    {%- comment -%} 🟢 Button Block logic {%- endcomment -%}
+    {%- assign btn_label = section.settings.btn_label | strip -%}
+    {% if btn_label != blank %}
+      <a href="{{ section.settings.btn_link }}" class="hero-btn" style="margin-top: {{ section.settings.btn_mt }}px;">
+        {{ btn_label }}
+      </a>
     {% endif %}
   </div>
 </div>
@@ -86,7 +111,7 @@
     { "type": "range", "id": "subtitle_size", "label": "Desktop Size", "min": 15, "max": 60, "default": 30 },
     { "type": "range", "id": "subtitle_size_mobile", "label": "Mobile Size", "min": 12, "max": 40, "default": 20 },
     { "type": "range", "id": "subtitle_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 16 },
+    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 0 },
     { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
     { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
