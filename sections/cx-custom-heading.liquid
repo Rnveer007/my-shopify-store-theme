@@ -1,6 +1,9 @@
 {%- comment -%} CSS Render from Snippets {%- endcomment -%}
 {% render 'cx-custom-heading-css', section: section %}
 
+{%- comment -%} 🟢 JS Connect (Ye line add karo) {%- endcomment -%}
+<script src="{{ 'cx-custom-heading.js' | asset_url }}" defer="defer"></script>
+
 <div class="custom-hero-section" id="hero-{{ section.id }}">
   <div class="hero-image-wrapper">
     {% if section.settings.desktop_image != blank %}
