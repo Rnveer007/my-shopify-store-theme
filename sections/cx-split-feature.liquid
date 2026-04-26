@@ -1,39 +1,56 @@
 {%- style -%}
   #cx-split-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
-    /* Padding control slider se manage ho rahi hai */
     padding: {{ section.settings.section_padding_t }}px 0 {{ section.settings.section_padding_b }}px 0;
     position: relative;
-    z-index: 0 !important;
-    overflow: hidden;
-    /* 🟢 FIX 1: Ensure section doesn't take extra space */
-    min-height: auto !important; 
-    display: block;
+    z-index: 1;
   }
 
   .cx-split-container {
-    width: 90%;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    /* 🟢 FIX 2: Align items to start if they look too stretched */
-    align-items: center; 
-    gap: 40px;
+    width: 90%; margin: 0 auto;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 30px;
     flex-direction: {% if section.settings.img_position == 'right' %}row-reverse{% else %}row{% endif %};
   }
 
-  /* 🟢 FIX 3: Headings ki default browser margin zero karo */
-  .cx-split-title, .cx-split-subtitle {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+  .cx-split-image, .cx-split-content { flex: 1; min-width: 300px; }
+
+  /* 🔴 IMAGE HIDING LOGIC - Aggressive Fix */
+  .cx-split-image .desktop-img-wrapper { display: block !important; }
+  .cx-split-image .mobile-img-wrapper { display: none !important; }
+
+  @media screen and (max-width: 750px) {
+    .cx-split-image .desktop-img-wrapper { display: none !important; }
+    .cx-split-image .mobile-img-wrapper { display: block !important; }
+    
+    .cx-split-container { flex-direction: column{% if section.settings.mob_img_first == false %}-reverse{% endif %}; }
   }
 
-  /* Image height fix */
   .cx-split-image img {
-    max-height: 600px; /* Ek limit set kar dete hain */
-    width: 100%;
-    object-fit: cover;
+    width: 100%; height: auto; display: block;
     border-radius: {{ section.settings.img_rounded }}px;
+    object-fit: cover;
+    max-height: 550px; /* Height control */
+  }
+
+  /* Logo & Text Styles */
+  .cx-feature-logo { max-width: {{ section.settings.logo_width }}px; margin-bottom: 15px; display: block; }
+  .cx-split-content { text-align: {{ section.settings.text_align }}; }
+  .cx-split-title { margin: 0 0 15px 0; color: {{ section.settings.title_color }}; font-weight: bold; line-height: 1.2; }
+  .cx-split-subtitle { margin: 0 0 20px 0; color: {{ section.settings.subtitle_color }}; line-height: 1.5; }
+
+  @media screen and (min-width: 751px) {
+    .cx-split-title { font-size: {{ section.settings.title_size }}px; }
+    .cx-split-subtitle { font-size: {{ section.settings.subtitle_size }}px; }
+  }
+  @media screen and (max-width: 750px) {
+    .cx-split-title { font-size: {{ section.settings.title_size_mob }}px; }
+    .cx-split-subtitle { font-size: {{ section.settings.subtitle_size_mob }}px; }
+  }
+
+  .cx-split-btn {
+    display: inline-block; padding: 12px 35px; border-radius: 4px; font-weight: bold; text-decoration: none;
+    background-color: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text_color }} !important;
   }
 {%- endstyle -%}
 
@@ -41,16 +58,21 @@
   <div class="cx-split-container">
     
     <div class="cx-split-image">
+      {%- comment -%} Desktop Image Wrapper {%- endcomment -%}
       {% if section.settings.image_desktop != blank %}
-        <img src="{{ section.settings.image_desktop | image_url: width: 1200 }}" class="desktop-img" loading="lazy">
+        <div class="desktop-img-wrapper">
+          <img src="{{ section.settings.image_desktop | image_url: width: 1400 }}" loading="lazy" alt="Desktop">
+        </div>
       {% endif %}
 
-      {% if section.settings.image_mobile != blank %}
-        <img src="{{ section.settings.image_mobile | image_url: width: 800 }}" class="mobile-img" loading="lazy">
-      {% elsif section.settings.image_desktop != blank %}
-        {%- comment -%} Fallback: agar mobile img nahi hai toh desktop wali ko mobile class ke sath use karo {%- endcomment -%}
-        <img src="{{ section.settings.image_desktop | image_url: width: 800 }}" class="mobile-img" loading="lazy">
-      {% endif %}
+      {%- comment -%} Mobile Image Wrapper {%- endcomment -%}
+      <div class="mobile-img-wrapper">
+        {% if section.settings.image_mobile != blank %}
+          <img src="{{ section.settings.image_mobile | image_url: width: 800 }}" loading="lazy" alt="Mobile">
+        {% elsif section.settings.image_desktop != blank %}
+          <img src="{{ section.settings.image_desktop | image_url: width: 800 }}" loading="lazy" alt="Fallback">
+        {% endif %}
+      </div>
 
       {% if section.settings.image_desktop == blank and section.settings.image_mobile == blank %}
         {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
@@ -58,19 +80,21 @@
     </div>
 
     <div class="cx-split-content">
-       {%- assign title_c = section.settings.title | strip -%}
-       {% if title_c != blank %}
-         <div style="margin-bottom: {{ section.settings.title_mb }}px;"><h2 class="cx-split-title">{{ title_c }}</h2></div>
-       {% endif %}
+      {% if section.settings.feature_logo != blank %}
+        <img src="{{ section.settings.feature_logo | image_url: width: 400 }}" class="cx-feature-logo" loading="lazy">
+      {% endif %}
 
-       {%- assign subtitle_c = section.settings.subtitle | strip -%}
-       {% if subtitle_c != blank %}
-         <div style="margin-bottom: {{ section.settings.subtitle_mb }}px;"><p class="cx-split-subtitle">{{ subtitle_c }}</p></div>
-       {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="cx-split-title">{{ section.settings.title }}</h2>
+      {% endif %}
 
-       {% if section.settings.btn_label != blank %}
-         <a href="{{ section.settings.btn_link }}" class="cx-split-btn">{{ section.settings.btn_label }}</a>
-       {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <div class="cx-split-subtitle">{{ section.settings.subtitle }}</div>
+      {% endif %}
+
+      {% if section.settings.btn_label != blank %}
+        <a href="{{ section.settings.btn_link }}" class="cx-split-btn">{{ section.settings.btn_label }}</a>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -79,33 +103,34 @@
 {
   "name": "CX-Split-Feature",
   "settings": [
+    { "type": "header", "content": "1. Layout Settings" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
     { "type": "select", "id": "img_position", "label": "Desktop Image Position", "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "right", "label": "Right" }
+        { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
       ], "default": "left" },
     { "type": "checkbox", "id": "mob_img_first", "label": "Mobile: Image First?", "default": true },
     { "type": "range", "id": "section_padding_t", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Top", "default": 40 },
     { "type": "range", "id": "section_padding_b", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 40 },
-    { "type": "header", "content": "Image Settings" },
+    { "type": "header", "content": "2. Image Settings" },
     { "type": "image_picker", "id": "image_desktop", "label": "Desktop Image" },
     { "type": "image_picker", "id": "image_mobile", "label": "Mobile Image" },
-    { "type": "range", "id": "img_rounded", "min": 0, "max": 50, "step": 2, "unit": "px", "label": "Corner Roundness", "default": 0 },
-    { "type": "header", "content": "Content Settings" },
+    { "type": "range", "id": "img_rounded", "min": 0, "max": 50, "label": "Corner Roundness", "default": 0 },
+    { "type": "header", "content": "3. Logo Settings" },
+    { "type": "image_picker", "id": "feature_logo", "label": "Feature Logo/Icon" },
+    { "type": "range", "id": "logo_width", "min": 30, "max": 300, "step": 5, "label": "Logo Width", "default": 100 },
+    { "type": "header", "content": "4. Content Settings" },
     { "type": "select", "id": "text_align", "label": "Text Alignment", "options": [
         { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
       ], "default": "left" },
     { "type": "text", "id": "title", "label": "Heading", "default": "Our Story" },
     { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
-    { "type": "range", "id": "title_size", "min": 20, "max": 80, "label": "Desktop Size", "default": 32 },
-    { "type": "range", "id": "title_size_mob", "min": 15, "max": 60, "label": "Mobile Size", "default": 24 },
-    { "type": "range", "id": "title_mb", "min": 0, "max": 50, "label": "Heading Bottom Margin", "default": 10 },
-    { "type": "textarea", "id": "subtitle", "label": "Description", "default": "Share details about your brand." },
+    { "type": "range", "id": "title_size", "min": 20, "max": 80, "label": "Desktop Font Size", "default": 32 },
+    { "type": "range", "id": "title_size_mob", "min": 15, "max": 60, "label": "Mobile Font Size", "default": 24 },
+    { "type": "richtext", "id": "subtitle", "label": "Description", "default": "<p>Share details about your brand.</p>" },
     { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#444444" },
-    { "type": "range", "id": "subtitle_size", "min": 12, "max": 40, "label": "Desktop Size", "default": 18 },
-    { "type": "range", "id": "subtitle_size_mob", "min": 10, "max": 30, "label": "Mobile Size", "default": 16 },
-    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 50, "label": "Desc Bottom Margin", "default": 15 },
-    { "type": "header", "content": "Button Settings" },
+    { "type": "range", "id": "subtitle_size", "min": 12, "max": 40, "label": "Desktop Font Size", "default": 18 },
+    { "type": "range", "id": "subtitle_size_mob", "min": 10, "max": 30, "label": "Mobile Font Size", "default": 16 },
+    { "type": "header", "content": "5. Button Settings" },
     { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Learn More" },
     { "type": "url", "id": "btn_link", "label": "Button Link" },
     { "type": "color", "id": "btn_bg", "label": "Button Background", "default": "#000000" },
