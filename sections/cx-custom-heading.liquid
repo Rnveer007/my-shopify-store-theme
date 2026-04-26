@@ -1,5 +1,4 @@
 {%- style -%}
-  /* ID based scoping to avoid global conflicts */
   #cx-heading-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
     width: 100%;
@@ -7,7 +6,6 @@
     flex-direction: column;
     align-items: {{ section.settings.text_align }};
     justify-content: center;
-    /* No fixed height as per rule 1 */
     padding: 20px 0; 
   }
 
@@ -19,74 +17,76 @@
     text-align: {{ section.settings.text_align }};
   }
 
-  /* Base Styles */
-  .cx-main-title {
-    margin: 0;
-    line-height: 1.2;
-    word-break: break-word;
-    color: {{ section.settings.title_color }};
-  }
+  .cx-main-title { margin: 0; line-height: 1.2; word-break: break-word; color: {{ section.settings.title_color }}; }
+  .cx-sub-title { margin: 0; line-height: 1.4; word-break: break-word; color: {{ section.settings.subtitle_color }}; }
 
-  .cx-sub-title {
-    margin: 0;
-    line-height: 1.4;
-    word-break: break-word;
-    color: {{ section.settings.subtitle_color }};
-  }
-
-  .cx-custom-html-box {
-    width: 100%;
-  }
-
-  /* Responsive Font Sizes */
+  /* 🟢 Desktop Styles */
   @media screen and (min-width: 751px) {
     .cx-main-title { font-size: {{ section.settings.title_size }}px; }
     .cx-sub-title { font-size: {{ section.settings.subtitle_size }}px; }
+    
+    #title-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.title_mt }}px;
+      margin-bottom: {{ section.settings.title_mb }}px;
+      padding-top: {{ section.settings.title_pt }}px;
+      padding-bottom: {{ section.settings.title_pb }}px;
+    }
+    #subtitle-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.subtitle_mt }}px;
+      margin-bottom: {{ section.settings.subtitle_mb }}px;
+      padding-top: {{ section.settings.subtitle_pt }}px;
+      padding-bottom: {{ section.settings.subtitle_pb }}px;
+    }
+    #html-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.html_mt }}px;
+      margin-bottom: {{ section.settings.html_mb }}px;
+    }
   }
+
+  /* 🟢 Mobile Styles */
   @media screen and (max-width: 750px) {
     .cx-main-title { font-size: {{ section.settings.title_size_mobile }}px; }
     .cx-sub-title { font-size: {{ section.settings.subtitle_size_mobile }}px; }
+
+    #title-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.title_mt_m }}px !important;
+      margin-bottom: {{ section.settings.title_mb_m }}px !important;
+      padding-top: {{ section.settings.title_pt_m }}px !important;
+      padding-bottom: {{ section.settings.title_pb_m }}px !important;
+    }
+    #subtitle-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.subtitle_mt_m }}px !important;
+      margin-bottom: {{ section.settings.subtitle_mb_m }}px !important;
+      padding-top: {{ section.settings.subtitle_pt_m }}px !important;
+      padding-bottom: {{ section.settings.subtitle_pb_m }}px !important;
+    }
+    #html-wrapper-{{ section.id }} {
+      margin-top: {{ section.settings.html_mt_m }}px !important;
+      margin-bottom: {{ section.settings.html_mb_m }}px !important;
+    }
   }
 {%- endstyle -%}
 
 <div id="cx-heading-{{ section.id }}" class="cx-custom-heading-section">
   <div class="cx-heading-container">
 
-    {%- comment -%} 1. CUSTOM HTML COLUMN {%- endcomment -%}
     {%- assign html_content = section.settings.custom_html | strip -%}
     {% if html_content != blank %}
-      <div class="cx-custom-html-box" style="
-        margin-top: {{ section.settings.html_mt }}px;
-        margin-bottom: {{ section.settings.html_mb }}px;
-        padding-top: {{ section.settings.html_pt }}px;
-        padding-bottom: {{ section.settings.html_pb }}px;
-      ">
+      <div id="html-wrapper-{{ section.id }}" class="cx-custom-html-box">
         {{ section.settings.custom_html }}
       </div>
     {% endif %}
 
-    {%- comment -%} 2. MAIN HEADING COLUMN {%- endcomment -%}
     {%- assign title_content = section.settings.title | strip -%}
     {% if title_content != blank %}
-      <div class="cx-main-title-wrapper" style="
-        margin-top: {{ section.settings.title_mt }}px;
-        margin-bottom: {{ section.settings.title_mb }}px;
-        padding-top: {{ section.settings.title_pt }}px;
-        padding-bottom: {{ section.settings.title_pb }}px;
-      ">
+      <div id="title-wrapper-{{ section.id }}" class="cx-main-title-wrapper">
         <h1 class="cx-main-title">{{ section.settings.title }}</h1>
       </div>
     {% endif %}
 
-    {%- comment -%} 3. SUB-HEADING COLUMN {%- endcomment -%}
     {%- assign subtitle_content = section.settings.subtitle | strip -%}
     {% if subtitle_content != blank %}
-      <div class="cx-sub-title-wrapper" style="
-        margin-top: {{ section.settings.subtitle_mt }}px;
-        margin-bottom: {{ section.settings.subtitle_mb }}px;
-        padding-top: {{ section.settings.subtitle_pt }}px;
-        padding-bottom: {{ section.settings.subtitle_pb }}px;
-      ">
+      <div id="subtitle-wrapper-{{ section.id }}" class="cx-sub-title-wrapper">
         <h2 class="cx-sub-title">{{ section.settings.subtitle }}</h2>
       </div>
     {% endif %}
@@ -98,60 +98,52 @@
 {
   "name": "CX-Custom-Heading",
   "settings": [
-    {
-      "type": "header",
-      "content": "Global Settings"
-    },
+    { "type": "header", "content": "Global Settings" },
     { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
-    {
-      "type": "select",
-      "id": "text_align",
-      "label": "Alignment",
-      "options": [
+    { "type": "select", "id": "text_align", "label": "Alignment", "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "header",
-      "content": "Custom HTML Column"
-    },
+      ], "default": "center" },
+
+    { "type": "header", "content": "1. Custom HTML (Desktop)" },
     { "type": "html", "id": "custom_html", "label": "HTML Code" },
     { "type": "range", "id": "html_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
     { "type": "range", "id": "html_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 0 },
-    { "type": "range", "id": "html_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "html_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 },
-    {
-      "type": "header",
-      "content": "Main Heading Column"
-    },
-    { "type": "text", "id": "title", "label": "Main Heading Text" },
-    { "type": "color", "id": "title_color", "label": "Heading Color", "default": "#000000" },
-    { "type": "range", "id": "title_size", "min": 10, "max": 100, "step": 1, "unit": "px", "label": "Desktop Size", "default": 40 },
-    { "type": "range", "id": "title_size_mobile", "min": 10, "max": 80, "step": 1, "unit": "px", "label": "Mobile Size", "default": 24 },
-    { "type": "range", "id": "title_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "title_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 10 },
-    { "type": "range", "id": "title_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "title_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 },
-    {
-      "type": "header",
-      "content": "Sub-Heading Column"
-    },
-    { "type": "text", "id": "subtitle", "label": "Sub-Heading Text" },
-    { "type": "color", "id": "subtitle_color", "label": "Sub-heading Color", "default": "#444444" },
-    { "type": "range", "id": "subtitle_size", "min": 10, "max": 80, "step": 1, "unit": "px", "label": "Desktop Size", "default": 20 },
-    { "type": "range", "id": "subtitle_size_mobile", "min": 10, "max": 60, "step": 1, "unit": "px", "label": "Mobile Size", "default": 16 },
-    { "type": "range", "id": "subtitle_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 0 },
-    { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 }
+    { "type": "header", "content": "Custom HTML (Mobile)" },
+    { "type": "range", "id": "html_mt_m", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top Mobile", "default": 0 },
+    { "type": "range", "id": "html_mb_m", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom Mobile", "default": 0 },
+
+    { "type": "header", "content": "2. Main Heading (Desktop)" },
+    { "type": "text", "id": "title", "label": "Text", "default": "Main Title" },
+    { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
+    { "type": "range", "id": "title_size", "min": 10, "max": 100, "label": "Font Size", "default": 40 },
+    { "type": "range", "id": "title_mt", "min": 0, "max": 100, "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "title_mb", "min": 0, "max": 100, "label": "Margin Bottom", "default": 10 },
+    { "type": "range", "id": "title_pt", "min": 0, "max": 100, "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "title_pb", "min": 0, "max": 100, "label": "Padding Bottom", "default": 0 },
+    { "type": "header", "content": "Main Heading (Mobile)" },
+    { "type": "range", "id": "title_size_mobile", "min": 10, "max": 80, "label": "Font Size Mobile", "default": 24 },
+    { "type": "range", "id": "title_mt_m", "min": 0, "max": 100, "label": "Margin Top Mobile", "default": 0 },
+    { "type": "range", "id": "title_mb_m", "min": 0, "max": 100, "label": "Margin Bottom Mobile", "default": 5 },
+    { "type": "range", "id": "title_pt_m", "min": 0, "max": 100, "label": "Padding Top Mobile", "default": 0 },
+    { "type": "range", "id": "title_pb_m", "min": 0, "max": 100, "label": "Padding Bottom Mobile", "default": 0 },
+
+    { "type": "header", "content": "3. Sub-Heading (Desktop)" },
+    { "type": "text", "id": "subtitle", "label": "Text", "default": "Sub-heading text" },
+    { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#444444" },
+    { "type": "range", "id": "subtitle_size", "min": 10, "max": 80, "label": "Font Size", "default": 20 },
+    { "type": "range", "id": "subtitle_mt", "min": 0, "max": 100, "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "label": "Margin Bottom", "default": 0 },
+    { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "label": "Padding Bottom", "default": 0 },
+    { "type": "header", "content": "Sub-Heading (Mobile)" },
+    { "type": "range", "id": "subtitle_size_mobile", "min": 10, "max": 60, "label": "Font Size Mobile", "default": 16 },
+    { "type": "range", "id": "subtitle_mt_m", "min": 0, "max": 100, "label": "Margin Top Mobile", "default": 0 },
+    { "type": "range", "id": "subtitle_mb_m", "min": 0, "max": 100, "label": "Margin Bottom Mobile", "default": 0 },
+    { "type": "range", "id": "subtitle_pt_m", "min": 0, "max": 100, "label": "Padding Top Mobile", "default": 0 },
+    { "type": "range", "id": "subtitle_pb_m", "min": 0, "max": 100, "label": "Padding Bottom Mobile", "default": 0 }
   ],
-  "presets": [
-    {
-      "name": "CX-Custom-Heading"
-    }
-  ]
+  "presets": [ { "name": "CX-Custom-Heading" } ]
 }
 {% endschema %}
