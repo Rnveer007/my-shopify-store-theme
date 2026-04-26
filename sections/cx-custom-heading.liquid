@@ -1,7 +1,7 @@
 {%- comment -%} CSS Render from Snippets {%- endcomment -%}
 {% render 'cx-custom-heading-css', section: section %}
 
-{%- comment -%} 🟢 JS Connect (Ye line add karo) {%- endcomment -%}
+{%- comment -%} JS Connect {%- endcomment -%}
 <script src="{{ 'cx-custom-heading.js' | asset_url }}" defer="defer"></script>
 
 <div class="custom-hero-section" id="hero-{{ section.id }}">
@@ -22,9 +22,18 @@
       </div>
     {% endif %}
 
-    <h1 class="hero-title">{{ section.settings.title }}</h1>
-    <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
-    <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
+    {%- comment -%} 🟢 Conditional Rendering: Spacing Bug Fix {%- endcomment -%}
+    {% if section.settings.title != blank %}
+      <h1 class="hero-title">{{ section.settings.title }}</h1>
+    {% endif %}
+
+    {% if section.settings.subtitle != blank %}
+      <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
+    {% endif %}
+
+    {% if section.settings.paragraph_text != blank %}
+      <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
+    {% endif %}
     
     {% if section.settings.btn_label != blank %}
       <a href="{{ section.settings.btn_link }}" class="hero-btn">{{ section.settings.btn_label }}</a>
@@ -55,7 +64,7 @@
     { "type": "range", "id": "html_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
     { "type": "header", "content": "3. Heading Settings" },
-    { "type": "text", "id": "title", "label": "Text", "default": "Main Title" },
+    { "type": "text", "id": "title", "label": "Text", "default": "" },
     { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "title_size", "label": "Desktop Size", "min": 20, "max": 100, "default": 60 },
     { "type": "range", "id": "title_size_mobile", "label": "Mobile Size", "min": 15, "max": 60, "default": 30 },
@@ -65,7 +74,7 @@
     { "type": "range", "id": "title_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
     { "type": "header", "content": "4. Sub-Heading Settings" },
-    { "type": "text", "id": "subtitle", "label": "Text", "default": "Sub-Heading" },
+    { "type": "text", "id": "subtitle", "label": "Text", "default": "" },
     { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "subtitle_size", "label": "Desktop Size", "min": 15, "max": 60, "default": 30 },
     { "type": "range", "id": "subtitle_size_mobile", "label": "Mobile Size", "min": 12, "max": 40, "default": 20 },
@@ -75,7 +84,7 @@
     { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
     { "type": "header", "content": "5. Paragraph Settings" },
-    { "type": "textarea", "id": "paragraph_text", "label": "Text", "default": "Your brand story goes here." },
+    { "type": "textarea", "id": "paragraph_text", "label": "Text", "default": "" },
     { "type": "color", "id": "para_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "para_size", "label": "Size (Desktop)", "min": 12, "max": 30, "default": 18 },
     { "type": "range", "id": "para_size_mobile", "label": "Size (Mobile)", "min": 10, "max": 25, "default": 14 },
@@ -85,7 +94,7 @@
     { "type": "range", "id": "para_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
     { "type": "header", "content": "6. Button Settings" },
-    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Shop Now" },
+    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "" },
     { "type": "url", "id": "btn_link", "label": "Button Link" },
     { "type": "color", "id": "btn_color", "label": "Button Color", "default": "#000000" },
     { "type": "color", "id": "btn_text_color", "label": "Button Text Color", "default": "#ffffff" },
