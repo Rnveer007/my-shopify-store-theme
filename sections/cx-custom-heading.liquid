@@ -27,8 +27,15 @@
       <h1 class="hero-title">{{ section.settings.title }}</h1>
     {% endif %}
 
-    {% if section.settings.subtitle != blank %}
-      <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
+ {% if section.settings.subtitle != blank %}
+      <h2 class="hero-subtitle" style="
+        margin-top: {{ section.settings.subtitle_mt }}px;
+        margin-bottom: {{ section.settings.subtitle_mb }}px;
+        padding-top: {{ section.settings.subtitle_pt }}px;
+        padding-bottom: {{ section.settings.subtitle_pb }}px;
+      ">
+        {{ section.settings.subtitle }}
+      </h2>
     {% endif %}
 
     {% if section.settings.paragraph_text != blank %}
