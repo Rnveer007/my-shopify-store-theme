@@ -309,22 +309,22 @@
         "subtitle_size": 30,
         "subtitle_size_mobile": 20,
         "subtitle_mt": 0,
-        "subtitle_mb": 16,
+        "subtitle_mb": 2,
         "subtitle_pt": 0,
         "subtitle_pb": 0,
         "paragraph_text": "",
         "para_color": "#000000",
         "para_size": 23,
         "para_size_mobile": 14,
-        "para_mt": 18,
-        "para_mb": 20,
+        "para_mt": 0,
+        "para_mb": 4,
         "para_pt": 0,
         "para_pb": 0,
         "btn_label": "",
         "btn_link": "",
         "btn_color": "#000000",
         "btn_text_color": "#ffffff",
-        "btn_mt": 10
+        "btn_mt": 0
       }
     },
     "cx_featured_product_FdWEtz": {
