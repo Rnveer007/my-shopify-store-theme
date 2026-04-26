@@ -1,0 +1,183 @@
+{%- style -%}
+  #cx-split-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.section_padding_t }}px 0 {{ section.settings.section_padding_b }}px 0;
+  }
+
+  .cx-split-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    /* Desktop Image Flip Logic */
+    flex-direction: {% if section.settings.img_position == 'right' %}row-reverse{% else %}row{% endif %};
+  }
+
+  .cx-split-image, .cx-split-content {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  /* Image Styling */
+  .cx-split-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ section.settings.img_rounded }}px;
+    object-fit: cover;
+  }
+
+  .cx-split-content {
+    text-align: {{ section.settings.text_align }};
+  }
+
+  .cx-split-title {
+    margin: 0;
+    color: {{ section.settings.title_color }};
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .cx-split-subtitle {
+    margin: 0;
+    color: {{ section.settings.subtitle_color }};
+    font-size: {{ section.settings.subtitle_size }}px;
+    line-height: 1.4;
+  }
+
+  .cx-split-btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 30px;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text_color }} !important;
+    transition: opacity 0.3s;
+  }
+
+  .cx-split-btn:hover { opacity: 0.8; }
+
+  /* Mobile Responsive */
+  @media screen and (max-width: 750px) {
+    .cx-split-container {
+      flex-direction: column{% if section.settings.mob_img_first == false %}-reverse{% endif %};
+      gap: 20px;
+    }
+    .cx-split-title { font-size: {{ section.settings.title_size_mob }}px; }
+    .cx-split-subtitle { font-size: {{ section.settings.subtitle_size_mob }}px; }
+    
+    .desktop-img { display: none; }
+    .mobile-img { display: block; }
+  }
+
+  @media screen and (min-width: 751px) {
+    .mobile-img { display: none; }
+  }
+{%- endstyle -%}
+
+<section id="cx-split-{{ section.id }}" class="cx-split-feature">
+  <div class="cx-split-container">
+    
+    {%- comment -%} IMAGE COLUMN {%- endcomment -%}
+    <div class="cx-split-image">
+      {% if section.settings.image_desktop != blank %}
+        <img src="{{ section.settings.image_desktop | image_url: width: 1200 }}" class="desktop-img" loading="lazy">
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+
+      {% if section.settings.image_mobile != blank %}
+        <img src="{{ section.settings.image_mobile | image_url: width: 800 }}" class="mobile-img" loading="lazy">
+      {% elsif section.settings.image_desktop != blank %}
+        <img src="{{ section.settings.image_desktop | image_url: width: 800 }}" class="mobile-img" loading="lazy">
+      {% endif %}
+    </div>
+
+    {%- comment -%} CONTENT COLUMN {%- endcomment -%}
+    <div class="cx-split-content">
+      
+      {%- assign html_c = section.settings.custom_html | strip -%}
+      {% if html_c != blank %}
+        <div class="cx-html-wrapper" style="margin-bottom: {{ section.settings.html_mb }}px;">
+          {{ section.settings.custom_html }}
+        </div>
+      {% endif %}
+
+      {%- assign title_c = section.settings.title | strip -%}
+      {% if title_c != blank %}
+        <div class="cx-title-wrapper" style="margin-bottom: {{ section.settings.title_mb }}px;">
+          <h2 class="cx-split-title">{{ section.settings.title }}</h2>
+        </div>
+      {% endif %}
+
+      {%- assign subtitle_c = section.settings.subtitle | strip -%}
+      {% if subtitle_c != blank %}
+        <div class="cx-sub-wrapper" style="margin-bottom: {{ section.settings.subtitle_mb }}px;">
+          <p class="cx-split-subtitle">{{ section.settings.subtitle }}</p>
+        </div>
+      {% endif %}
+
+      {% if section.settings.btn_label != blank %}
+        <div class="cx-btn-wrapper" style="margin-top: 20px;">
+          <a href="{{ section.settings.btn_link }}" class="cx-split-btn">
+            {{ section.settings.btn_label }}
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CX-Split-Feature",
+  "settings": [
+    { "type": "header", "content": "Layout Settings" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "select", "id": "img_position", "label": "Desktop Image Position", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ], "default": "left" },
+    { "type": "checkbox", "id": "mob_img_first", "label": "Mobile: Image First?", "default": true },
+    { "type": "range", "id": "section_padding_t", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Top", "default": 40 },
+    { "type": "range", "id": "section_padding_b", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 40 },
+
+    { "type": "header", "content": "Image Settings" },
+    { "type": "image_picker", "id": "image_desktop", "label": "Desktop Image" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Mobile Image" },
+    { "type": "range", "id": "img_rounded", "min": 0, "max": 50, "step": 2, "unit": "px", "label": "Corner Roundness", "default": 0 },
+
+    { "type": "header", "content": "Content Settings" },
+    { "type": "select", "id": "text_align", "label": "Text Alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "left" },
+    { "type": "html", "id": "custom_html", "label": "Custom HTML" },
+    { "type": "range", "id": "html_mb", "min": 0, "max": 50, "label": "HTML Bottom Margin", "default": 10 },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Our Story" },
+    { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
+    { "type": "range", "id": "title_size", "min": 20, "max": 80, "label": "Desktop Size", "default": 32 },
+    { "type": "range", "id": "title_size_mob", "min": 15, "max": 60, "label": "Mobile Size", "default": 24 },
+    { "type": "range", "id": "title_mb", "min": 0, "max": 50, "label": "Heading Bottom Margin", "default": 10 },
+    
+    { "type": "textarea", "id": "subtitle", "label": "Description", "default": "Share details about your brand." },
+    { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#444444" },
+    { "type": "range", "id": "subtitle_size", "min": 12, "max": 40, "label": "Desktop Size", "default": 18 },
+    { "type": "range", "id": "subtitle_size_mob", "min": 10, "max": 30, "label": "Mobile Size", "default": 16 },
+    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 50, "label": "Desc Bottom Margin", "default": 15 },
+
+    { "type": "header", "content": "Button Settings" },
+    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Learn More" },
+    { "type": "url", "id": "btn_link", "label": "Button Link" },
+    { "type": "color", "id": "btn_bg", "label": "Button Background", "default": "#000000" },
+    { "type": "color", "id": "btn_text_color", "label": "Button Text", "default": "#ffffff" }
+  ],
+  "presets": [ { "name": "CX-Split-Feature" } ]
+}
+{% endschema %}
