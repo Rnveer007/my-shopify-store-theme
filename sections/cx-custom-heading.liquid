@@ -1,118 +1,157 @@
-{%- comment -%} CSS Render {%- endcomment -%}
-{% render 'cx-custom-heading-css', section: section %}
+{%- style -%}
+  /* ID based scoping to avoid global conflicts */
+  #cx-heading-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: {{ section.settings.text_align }};
+    justify-content: center;
+    /* No fixed height as per rule 1 */
+    padding: 20px 0; 
+  }
 
-<div class="custom-hero-section" id="hero-{{ section.id }}">
-  <div class="hero-image-wrapper">
-    {% if section.settings.desktop_image != blank %}
-      <img src="{{ section.settings.desktop_image | image_url: width: 2000 }}" class="hero-img desktop-only" loading="lazy">
-    {% endif %}
-    {% if section.settings.mobile_image != blank %}
-      <img src="{{ section.settings.mobile_image | image_url: width: 800 }}" class="hero-img mobile-only" loading="lazy">
-    {% endif %}
-    <div class="hero-overlay-layer" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
-  </div>
+  .cx-heading-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    text-align: {{ section.settings.text_align }};
+  }
 
-  <div class="hero-content">
-    {%- comment -%} SUBTITLE FIXED LOGIC {%- endcomment -%}
-    {%- assign subtitle_text = section.settings.subtitle | strip_html | strip -%}
-    {% if subtitle_text != blank %}
-      <div class="hero-subtitle-wrapper" style="
+  /* Base Styles */
+  .cx-main-title {
+    margin: 0;
+    line-height: 1.2;
+    word-break: break-word;
+    color: {{ section.settings.title_color }};
+  }
+
+  .cx-sub-title {
+    margin: 0;
+    line-height: 1.4;
+    word-break: break-word;
+    color: {{ section.settings.subtitle_color }};
+  }
+
+  .cx-custom-html-box {
+    width: 100%;
+  }
+
+  /* Responsive Font Sizes */
+  @media screen and (min-width: 751px) {
+    .cx-main-title { font-size: {{ section.settings.title_size }}px; }
+    .cx-sub-title { font-size: {{ section.settings.subtitle_size }}px; }
+  }
+  @media screen and (max-width: 750px) {
+    .cx-main-title { font-size: {{ section.settings.title_size_mobile }}px; }
+    .cx-sub-title { font-size: {{ section.settings.subtitle_size_mobile }}px; }
+  }
+{%- endstyle -%}
+
+<div id="cx-heading-{{ section.id }}" class="cx-custom-heading-section">
+  <div class="cx-heading-container">
+
+    {%- comment -%} 1. CUSTOM HTML COLUMN {%- endcomment -%}
+    {%- assign html_content = section.settings.custom_html | strip -%}
+    {% if html_content != blank %}
+      <div class="cx-custom-html-box" style="
+        margin-top: {{ section.settings.html_mt }}px;
+        margin-bottom: {{ section.settings.html_mb }}px;
+        padding-top: {{ section.settings.html_pt }}px;
+        padding-bottom: {{ section.settings.html_pb }}px;
+      ">
+        {{ section.settings.custom_html }}
+      </div>
+    {% endif %}
+
+    {%- comment -%} 2. MAIN HEADING COLUMN {%- endcomment -%}
+    {%- assign title_content = section.settings.title | strip -%}
+    {% if title_content != blank %}
+      <div class="cx-main-title-wrapper" style="
+        margin-top: {{ section.settings.title_mt }}px;
+        margin-bottom: {{ section.settings.title_mb }}px;
+        padding-top: {{ section.settings.title_pt }}px;
+        padding-bottom: {{ section.settings.title_pb }}px;
+      ">
+        <h1 class="cx-main-title">{{ section.settings.title }}</h1>
+      </div>
+    {% endif %}
+
+    {%- comment -%} 3. SUB-HEADING COLUMN {%- endcomment -%}
+    {%- assign subtitle_content = section.settings.subtitle | strip -%}
+    {% if subtitle_content != blank %}
+      <div class="cx-sub-title-wrapper" style="
         margin-top: {{ section.settings.subtitle_mt }}px;
         margin-bottom: {{ section.settings.subtitle_mb }}px;
         padding-top: {{ section.settings.subtitle_pt }}px;
         padding-bottom: {{ section.settings.subtitle_pb }}px;
       ">
-        <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
+        <h2 class="cx-sub-title">{{ section.settings.subtitle }}</h2>
       </div>
     {% endif %}
 
-    {%- comment -%} TITLE FIXED LOGIC {%- endcomment -%}
-    {%- assign title_text = section.settings.title | strip_html | strip -%}
-    {% if title_text != blank %}
-      <div class="hero-title-wrapper" style="
-        margin-top: {{ section.settings.title_mt }}px;
-        margin-bottom: {{ section.settings.title_mb }}px;
-      ">
-        <h1 class="hero-title">{{ section.settings.title }}</h1>
-      </div>
-    {% endif %}
-
-    {%- comment -%} PARAGRAPH FIXED LOGIC {%- endcomment -%}
-    {%- assign para_text = section.settings.paragraph_text | strip_html | strip -%}
-    {% if para_text != blank %}
-      <div class="hero-para-wrapper" style="
-        margin-top: {{ section.settings.para_mt }}px;
-        margin-bottom: {{ section.settings.para_mb }}px;
-      ">
-        <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
-      </div>
-    {% endif %}
-
-    {% if section.settings.btn_label != blank %}
-      <a href="{{ section.settings.btn_link }}" class="hero-btn" style="margin-top: {{ section.settings.btn_mt }}px;">{{ section.settings.btn_label }}</a>
-    {% endif %}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "CX Custom Heading",
+  "name": "CX-Custom-Heading",
   "settings": [
-    { "type": "header", "content": "1. Background Settings" },
+    {
+      "type": "header",
+      "content": "Global Settings"
+    },
     { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
-    { "type": "image_picker", "id": "desktop_image", "label": "Desktop Image" },
-    { "type": "image_picker", "id": "mobile_image", "label": "Mobile Image" },
-    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 90, "step": 10, "label": "Overlay Darkness", "default": 0 },
-    { "type": "select", "id": "text_align", "label": "Content Alignment", "options": [
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignment",
+      "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ], "default": "center" },
-
-    { "type": "header", "content": "2. Custom HTML Settings" },
-    { "type": "html", "id": "custom_html", "label": "Custom HTML / Code" },
-    { "type": "range", "id": "html_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "html_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 10 },
-    { "type": "range", "id": "html_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "html_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
-
-    { "type": "header", "content": "3. Heading Settings" },
-    { "type": "text", "id": "title", "label": "Text", "default": "" },
-    { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
-    { "type": "range", "id": "title_size", "label": "Desktop Size", "min": 20, "max": 100, "default": 60 },
-    { "type": "range", "id": "title_size_mobile", "label": "Mobile Size", "min": 15, "max": 60, "default": 30 },
-    { "type": "range", "id": "title_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "title_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 10 },
-    { "type": "range", "id": "title_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "title_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
-
-    { "type": "header", "content": "4. Sub-Heading Settings" },
-    { "type": "text", "id": "subtitle", "label": "Text", "default": "" },
-    { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#000000" },
-    { "type": "range", "id": "subtitle_size", "label": "Desktop Size", "min": 15, "max": 60, "default": 30 },
-    { "type": "range", "id": "subtitle_size_mobile", "label": "Mobile Size", "min": 12, "max": 40, "default": 20 },
-    { "type": "range", "id": "subtitle_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 0 },
-    { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
-
-    { "type": "header", "content": "5. Paragraph Settings" },
-    { "type": "textarea", "id": "paragraph_text", "label": "Text", "default": "" },
-    { "type": "color", "id": "para_color", "label": "Color", "default": "#000000" },
-    { "type": "range", "id": "para_size", "label": "Size (Desktop)", "min": 12, "max": 30, "default": 18 },
-    { "type": "range", "id": "para_size_mobile", "label": "Size (Mobile)", "min": 10, "max": 25, "default": 14 },
-    { "type": "range", "id": "para_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
-    { "type": "range", "id": "para_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 20 },
-    { "type": "range", "id": "para_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
-    { "type": "range", "id": "para_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
-
-    { "type": "header", "content": "6. Button Settings" },
-    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "" },
-    { "type": "url", "id": "btn_link", "label": "Button Link" },
-    { "type": "color", "id": "btn_color", "label": "Button Color", "default": "#000000" },
-    { "type": "color", "id": "btn_text_color", "label": "Button Text Color", "default": "#ffffff" },
-    { "type": "range", "id": "btn_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 10 }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Custom HTML Column"
+    },
+    { "type": "html", "id": "custom_html", "label": "HTML Code" },
+    { "type": "range", "id": "html_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "html_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 0 },
+    { "type": "range", "id": "html_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "html_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 },
+    {
+      "type": "header",
+      "content": "Main Heading Column"
+    },
+    { "type": "text", "id": "title", "label": "Main Heading Text" },
+    { "type": "color", "id": "title_color", "label": "Heading Color", "default": "#000000" },
+    { "type": "range", "id": "title_size", "min": 10, "max": 100, "step": 1, "unit": "px", "label": "Desktop Size", "default": 40 },
+    { "type": "range", "id": "title_size_mobile", "min": 10, "max": 80, "step": 1, "unit": "px", "label": "Mobile Size", "default": 24 },
+    { "type": "range", "id": "title_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "title_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 10 },
+    { "type": "range", "id": "title_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "title_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 },
+    {
+      "type": "header",
+      "content": "Sub-Heading Column"
+    },
+    { "type": "text", "id": "subtitle", "label": "Sub-Heading Text" },
+    { "type": "color", "id": "subtitle_color", "label": "Sub-heading Color", "default": "#444444" },
+    { "type": "range", "id": "subtitle_size", "min": 10, "max": 80, "step": 1, "unit": "px", "label": "Desktop Size", "default": 20 },
+    { "type": "range", "id": "subtitle_size_mobile", "min": 10, "max": 60, "step": 1, "unit": "px", "label": "Mobile Size", "default": 16 },
+    { "type": "range", "id": "subtitle_mt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "subtitle_mb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Margin Bottom", "default": 0 },
+    { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 1, "unit": "px", "label": "Padding Bottom", "default": 0 }
   ],
-  "presets": [ { "name": "CX Custom Heading" } ]
+  "presets": [
+    {
+      "name": "CX-Custom-Heading"
+    }
+  ]
 }
 {% endschema %}
