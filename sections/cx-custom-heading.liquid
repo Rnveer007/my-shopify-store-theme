@@ -10,6 +10,13 @@
   </div>
 
   <div class="hero-content">
+    
+    {% if section.settings.custom_html != blank %}
+      <div class="hero-custom-html">
+        {{ section.settings.custom_html }}
+      </div>
+    {% endif %}
+
     <h1 class="hero-title">{{ section.settings.title }}</h1>
     <h2 class="hero-subtitle">{{ section.settings.subtitle }}</h2>
     <p class="hero-paragraph">{{ section.settings.paragraph_text }}</p>
@@ -32,6 +39,15 @@
   .hero-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2; }
   
   .hero-content { position: relative; z-index: 5; width: 80%; text-align: {{ section.settings.text_align }}; }
+
+  /* 🟢 NEW: Custom HTML Styling Controls */
+  .hero-custom-html {
+    margin-top: {{ section.settings.html_mt }}px;
+    margin-bottom: {{ section.settings.html_mb }}px;
+    padding-top: {{ section.settings.html_pt }}px;
+    padding-bottom: {{ section.settings.html_pb }}px;
+    word-break: break-word;
+  }
 
   .hero-title { 
     color: {{ section.settings.title_color }};
@@ -94,7 +110,14 @@
         { "value": "right", "label": "Right" }
       ], "default": "center" },
 
-    { "type": "header", "content": "2. Heading" },
+    { "type": "header", "content": "2. Custom HTML Settings" },
+    { "type": "html", "id": "custom_html", "label": "Custom HTML / Code", "info": "Add SVG icons, custom scripts or HTML tags." },
+    { "type": "range", "id": "html_mt", "min": 0, "max": 100, "step": 2, "label": "Margin Top", "default": 0 },
+    { "type": "range", "id": "html_mb", "min": 0, "max": 100, "step": 2, "label": "Margin Bottom", "default": 10 },
+    { "type": "range", "id": "html_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
+    { "type": "range", "id": "html_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
+
+    { "type": "header", "content": "3. Heading Settings" },
     { "type": "text", "id": "title", "label": "Text", "default": "Main Title" },
     { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "title_size", "label": "Desktop Size", "min": 20, "max": 100, "default": 60 },
@@ -104,7 +127,7 @@
     { "type": "range", "id": "title_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
     { "type": "range", "id": "title_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
-    { "type": "header", "content": "3. Sub-Heading" },
+    { "type": "header", "content": "4. Sub-Heading Settings" },
     { "type": "text", "id": "subtitle", "label": "Text", "default": "Sub-Heading" },
     { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "subtitle_size", "label": "Desktop Size", "min": 15, "max": 60, "default": 30 },
@@ -114,7 +137,7 @@
     { "type": "range", "id": "subtitle_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
     { "type": "range", "id": "subtitle_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
-    { "type": "header", "content": "4. Paragraph" },
+    { "type": "header", "content": "5. Paragraph Settings" },
     { "type": "textarea", "id": "paragraph_text", "label": "Text", "default": "Your brand story goes here." },
     { "type": "color", "id": "para_color", "label": "Color", "default": "#000000" },
     { "type": "range", "id": "para_size", "label": "Size (Desktop)", "min": 12, "max": 30, "default": 18 },
@@ -124,7 +147,7 @@
     { "type": "range", "id": "para_pt", "min": 0, "max": 100, "step": 2, "label": "Padding Top", "default": 0 },
     { "type": "range", "id": "para_pb", "min": 0, "max": 100, "step": 2, "label": "Padding Bottom", "default": 0 },
 
-    { "type": "header", "content": "5. Button" },
+    { "type": "header", "content": "6. Button Settings" },
     { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Shop Now" },
     { "type": "url", "id": "btn_link", "label": "Button Link" },
     { "type": "color", "id": "btn_color", "label": "Button Color", "default": "#000000" },
