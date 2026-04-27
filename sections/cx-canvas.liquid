@@ -1,0 +1,23 @@
+<div class="cx-canvas-layout" id="cx-canvas-{{ section.id }}">
+  {%- comment -%} 
+    Ye line blocks/ folder ke blocks ko render karegi 
+  {%- endcomment -%}
+  {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "CX Section Canvas",
+  "tag": "section",
+  "class": "cx-canvas-section",
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "CX Section Canvas"
+    }
+  ]
+}
+{% endschema %}
