@@ -1,17 +1,21 @@
 {%- style -%}
-  #cx-shell-{{ section.id }} {
+  #cx-wrap-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
-    padding: {{ section.settings.pt_d }}px 0 {{ section.settings.pb_d }}px 0;
-    position: relative;
-    overflow: hidden;
+    padding-top: {{ section.settings.pt_d }}px;
+    padding-bottom: {{ section.settings.pb_d }}px;
+    {% if section.settings.bg_image != blank %}
+      background-image: url('{{ section.settings.bg_image | image_url: width: 2000 }}');
+      background-size: cover;
+      background-position: center;
+    {% endif %}
   }
 
-  .cx-shell-inner {
+  .cx-wrap-inner {
     margin: 0 auto;
     width: 100%;
-    transition: max-width 0.3s ease;
+    /* 🟢 Gutter / No-Gutter Logic */
     {% if section.settings.no_gutter %}
-      max-width: 1920px;
+      max-width: 100%; /* Becomes Full Width */
       padding: 0;
     {% else %}
       max-width: 1440px;
@@ -20,63 +24,68 @@
   }
 
   @media screen and (max-width: 750px) {
-    #cx-shell-{{ section.id }} {
-      padding: {{ section.settings.pt_m }}px 0 {{ section.settings.pb_m }}px 0;
+    #cx-wrap-{{ section.id }} {
+      padding-top: {{ section.settings.pt_m }}px;
+      padding-bottom: {{ section.settings.pb_m }}px;
     }
   }
 {%- endstyle -%}
 
-<section id="cx-shell-{{ section.id }}">
-  <div class="cx-shell-inner">
-    {% for block in section.blocks %}
-      <div class="cx-container-block" {{ block.shopify_attributes }}>
+<div id="cx-wrap-{{ section.id }}" class="cx-master-wrapper">
+  <div class="cx-wrap-inner">
+    
+    {%- for block in section.blocks -%}
+      <div class="cx-inner-block-item" {{ block.shopify_attributes }}>
         
-        {% case block.type %}
-          
-          {% when 'heading_block' %}
-            {%- comment -%} Is block mein Heading ka logic dalo {%- endcomment -%}
-            <div style="text-align: {{ block.settings.align }}; margin-bottom: 20px;">
-               <h2 style="font-size: {{ block.settings.size }}px; color: {{ block.settings.color }};">{{ block.settings.text }}</h2>
-            </div>
+        {%- case block.type -%}
+          {%- when 'section_content' -%}
+            {%- comment -%} 
+               Bhai, ye wo block hai jahan tum doosre sections ka 
+               HTML code "paste" karoge. 
+            {%- endcomment -%}
+            {{ block.settings.pasted_html }}
 
-          {% when 'split_feature_block' %}
-            {%- comment -%} Is block mein Split Feature ka logic dalo {%- endcomment -%}
-            {% render 'cx-split-logic', block: block %}
-
-        {% endcase %}
+          {%- when '@app' -%}
+            {% render block %}
+        {%- endcase -%}
         
       </div>
-    {% endfor %}
+    {%- endfor -%}
+
   </div>
-</section>
+</div>
 
 {% schema %}
 {
-  "name": "CX-Ultimate-Container",
+  "name": "CX-Container",
   "settings": [
-    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (1920px)", "default": false },
-    { "type": "color", "id": "bg_color", "label": "BG Color", "default": "#ffffff" },
+    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (Full Width)", "default": false },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "image_picker", "id": "bg_image", "label": "Background Image (Desktop)" },
     { "type": "header", "content": "Desktop Spacing" },
-    { "type": "range", "id": "pt_d", "min": 0, "max": 150, "label": "Top", "default": 60 },
-    { "type": "range", "id": "pb_d", "min": 0, "max": 150, "label": "Bottom", "default": 60 },
+    { "type": "range", "id": "pt_d", "min": 0, "max": 150, "step": 2, "label": "Top Padding", "default": 40 },
+    { "type": "range", "id": "pb_d", "min": 0, "max": 150, "step": 2, "label": "Bottom Padding", "default": 40 },
     { "type": "header", "content": "Mobile Spacing" },
-    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "label": "Top Mobile", "default": 30 },
-    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "label": "Bottom Mobile", "default": 30 }
+    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "step": 2, "label": "Top Padding Mobile", "default": 20 },
+    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "step": 2, "label": "Bottom Padding Mobile", "default": 20 }
   ],
   "blocks": [
     {
-      "type": "heading_block",
-      "name": "Heading Block",
+      "type": "section_content",
+      "name": "Inner Section HTML",
       "settings": [
-        { "type": "text", "id": "text", "label": "Heading", "default": "Block Heading" },
-        { "type": "color", "id": "color", "label": "Color", "default": "#000000" },
-        { "type": "range", "id": "size", "min": 20, "max": 80, "label": "Size", "default": 32 },
-        { "type": "select", "id": "align", "label": "Align", "options": [
-            {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}
-          ], "default": "center"}
+        {
+          "type": "html",
+          "id": "pasted_html",
+          "label": "Pasted Section HTML",
+          "info": "Copy the rendered HTML of any section and paste here."
+        }
       ]
+    },
+    {
+      "type": "@app"
     }
   ],
-  "presets": [ { "name": "CX-Ultimate-Container" } ]
+  "presets": [ { "name": "CX-Container" } ]
 }
 {% endschema %}
