@@ -91,11 +91,24 @@
         "show_price": true,
         "bg_color": "#ffffff"
       }
+    },
+    "cx_container_ytQPND": {
+      "type": "cx-container",
+      "name": "CX-Container-Master",
+      "settings": {
+        "no_gutter": false,
+        "bg_color": "#ffffff",
+        "pt_d": 60,
+        "pb_d": 60,
+        "pt_m": 30,
+        "pb_m": 30
+      }
     }
   },
   "order": [
     "cx_custom_heading_U7hWAw",
     "cx_split_feature_Lri4X8",
-    "cx_featured_product_FdWEtz"
+    "cx_featured_product_FdWEtz",
+    "cx_container_ytQPND"
   ]
 }
