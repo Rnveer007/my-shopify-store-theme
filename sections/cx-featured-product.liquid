@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <div class="cx-slider-section" id="section-{{ section.id }}">
-  <div class="container">
+  <div class="cx-slider-wrapper">
     {% if section.settings.title != blank %}
       <h2 class="section-main-title">{{ section.settings.title }}</h2>
     {% endif %}
@@ -56,8 +56,21 @@
 </div>
 
 <style>
-  #section-{{ section.id }} { padding: 60px 20px; background-color: {{ section.settings.bg_color }}; }
-  .container { max-width: 1400px; margin: 0 auto; position: relative; }
+  #section-{{ section.id }} { 
+    padding: 60px 0; 
+    background-color: {{ section.settings.bg_color }}; 
+    width: 100%;
+    overflow: hidden; /* Important for Swiper sliders */
+  }
+
+  /* 🟢 WRAPPER: Removed fixed max-width to obey global container */
+  .cx-slider-wrapper { 
+    width: 100%; 
+    margin: 0 auto; 
+    position: relative; 
+    padding: 0 20px;
+  }
+
   .section-main-title { text-align: center; font-size: 2rem; margin-bottom: 40px; font-weight: bold; }
 
   /* Card Styling */
@@ -69,7 +82,8 @@
   .grid-sale-badge { position: absolute; top: 10px; left: 10px; background: #ff4444; color: #fff; padding: 4px 10px; font-size: 10px; border-radius: 4px; font-weight: bold; }
 
   .card-info { padding: 20px 10px; text-align: {{ section.settings.text_align }}; }
-  .card-title { font-size: 16px; margin-bottom: 8px; color: #111; font-weight: 500; }
+  .card-title { font-size: 16px; margin-bottom: 8px; color: #111; font-weight: 500; text-decoration: none; }
+  .card-link { text-decoration: none; }
   .price-current { font-weight: 700; color: #000; }
   .price-old { color: #999; text-decoration: line-through; margin-left: 8px; font-size: 14px; }
 
@@ -87,13 +101,16 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-  new Swiper(".cxSwiper-{{ section.id }}", {
-    slidesPerView: 2,
-    spaceBetween: 20,
-    navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-    breakpoints: {
-      1024: { slidesPerView: {{ section.settings.cols_desktop }} }
-    }
+  // Initializing only if grid mode is off for mobile
+  document.addEventListener('DOMContentLoaded', function() {
+    new Swiper(".cxSwiper-{{ section.id }}", {
+      slidesPerView: 2,
+      spaceBetween: 20,
+      navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+      breakpoints: {
+        1024: { slidesPerView: {{ section.settings.cols_desktop }} }
+      }
+    });
   });
 </script>
 
@@ -102,7 +119,7 @@
   "name": "CX Premium Slider v2",
   "settings": [
     { "type": "text", "id": "title", "label": "Heading", "default": "Featured Products" },
-    { "type": "header", "content": "Product Selection (Choose One)" },
+    { "type": "header", "content": "Product Selection" },
     { "type": "product_list", "id": "product_list", "label": "Option 1: Manual Products", "limit": 12 },
     { "type": "collection", "id": "collection", "label": "Option 2: From Collection" },
     { "type": "header", "content": "Layout Controls" },

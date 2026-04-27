@@ -1,42 +1,76 @@
 {%- style -%}
   #cx-split-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
-    padding: {{ section.settings.section_padding_t }}px 0 {{ section.settings.section_padding_b }}px 0;
+    padding-top: {{ section.settings.section_padding_t }}px;
+    padding-bottom: {{ section.settings.section_padding_b }}px;
     position: relative;
     z-index: 1;
+    overflow: hidden;
+  }
+
+  /* 🟢 CONTAINER: No fixed width, takes full space or parent width */
+  .cx-split-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px; 
   }
 
   .cx-split-container {
-    width: 90%; margin: 0 auto;
-    display: flex; flex-wrap: wrap; align-items: center; gap: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
     flex-direction: {% if section.settings.img_position == 'right' %}row-reverse{% else %}row{% endif %};
   }
 
-  .cx-split-image, .cx-split-content { flex: 1; min-width: 300px; }
-
-  /* 🔴 IMAGE HIDING LOGIC - Aggressive Fix */
-  .cx-split-image .desktop-img-wrapper { display: block !important; }
-  .cx-split-image .mobile-img-wrapper { display: none !important; }
-
-  @media screen and (max-width: 750px) {
-    .cx-split-image .desktop-img-wrapper { display: none !important; }
-    .cx-split-image .mobile-img-wrapper { display: block !important; }
-    
-    .cx-split-container { flex-direction: column{% if section.settings.mob_img_first == false %}-reverse{% endif %}; }
+  .cx-split-image, .cx-split-content {
+    flex: 1;
+    min-width: min(100%, 350px); 
   }
 
+  /* Image Display Logic */
   .cx-split-image img {
-    width: 100%; height: auto; display: block;
+    width: 100%;
+    height: auto;
+    display: block;
     border-radius: {{ section.settings.img_rounded }}px;
     object-fit: cover;
-    max-height: 550px; /* Height control */
   }
 
-  /* Logo & Text Styles */
-  .cx-feature-logo { max-width: {{ section.settings.logo_width }}px; margin-bottom: 15px; display: block; }
+  .desktop-img-wrapper { display: block !important; }
+  .mobile-img-wrapper { display: none !important; }
+
+  @media screen and (max-width: 750px) {
+    .desktop-img-wrapper { display: none !important; }
+    .mobile-img-wrapper { display: block !important; }
+    
+    .cx-split-container {
+      flex-direction: column{% if section.settings.mob_img_first == false %}-reverse{% endif %};
+      gap: 20px;
+    }
+  }
+
+  /* Logo & Content Styles */
+  .cx-feature-logo {
+    max-width: {{ section.settings.logo_width }}px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
   .cx-split-content { text-align: {{ section.settings.text_align }}; }
-  .cx-split-title { margin: 0 0 15px 0; color: {{ section.settings.title_color }}; font-weight: bold; line-height: 1.2; }
-  .cx-split-subtitle { margin: 0 0 20px 0; color: {{ section.settings.subtitle_color }}; line-height: 1.5; }
+  
+  .cx-split-title { 
+    margin: 0 0 15px 0; 
+    color: {{ section.settings.title_color }}; 
+    font-weight: bold; 
+    line-height: 1.1; 
+  }
+
+  .cx-split-subtitle { 
+    margin: 0 0 25px 0; 
+    color: {{ section.settings.subtitle_color }}; 
+    line-height: 1.5; 
+  }
 
   @media screen and (min-width: 751px) {
     .cx-split-title { font-size: {{ section.settings.title_size }}px; }
@@ -48,53 +82,59 @@
   }
 
   .cx-split-btn {
-    display: inline-block; padding: 12px 35px; border-radius: 4px; font-weight: bold; text-decoration: none;
+    display: inline-block;
+    padding: 14px 40px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
     background-color: {{ section.settings.btn_bg }};
     color: {{ section.settings.btn_text_color }} !important;
   }
 {%- endstyle -%}
 
 <section id="cx-split-{{ section.id }}" class="cx-split-feature">
-  <div class="cx-split-container">
-    
-    <div class="cx-split-image">
-      {%- comment -%} Desktop Image Wrapper {%- endcomment -%}
-      {% if section.settings.image_desktop != blank %}
-        <div class="desktop-img-wrapper">
-          <img src="{{ section.settings.image_desktop | image_url: width: 1400 }}" loading="lazy" alt="Desktop">
-        </div>
-      {% endif %}
+  <div class="cx-split-wrapper">
+    <div class="cx-split-container">
+      
+      <div class="cx-split-image">
+        {% if section.settings.image_desktop != blank %}
+          <div class="desktop-img-wrapper">
+            <img src="{{ section.settings.image_desktop | image_url: width: 1400 }}" loading="lazy" alt="Desktop">
+          </div>
+        {% endif %}
 
-      {%- comment -%} Mobile Image Wrapper {%- endcomment -%}
-      <div class="mobile-img-wrapper">
-        {% if section.settings.image_mobile != blank %}
-          <img src="{{ section.settings.image_mobile | image_url: width: 800 }}" loading="lazy" alt="Mobile">
-        {% elsif section.settings.image_desktop != blank %}
-          <img src="{{ section.settings.image_desktop | image_url: width: 800 }}" loading="lazy" alt="Fallback">
+        <div class="mobile-img-wrapper">
+          {% if section.settings.image_mobile != blank %}
+            <img src="{{ section.settings.image_mobile | image_url: width: 800 }}" loading="lazy" alt="Mobile">
+          {% elsif section.settings.image_desktop != blank %}
+            <img src="{{ section.settings.image_desktop | image_url: width: 800 }}" loading="lazy" alt="Fallback">
+          {% endif %}
+        </div>
+
+        {% if section.settings.image_desktop == blank and section.settings.image_mobile == blank %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
         {% endif %}
       </div>
 
-      {% if section.settings.image_desktop == blank and section.settings.image_mobile == blank %}
-        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-      {% endif %}
-    </div>
+      <div class="cx-split-content">
+        {% if section.settings.feature_logo != blank %}
+          <img src="{{ section.settings.feature_logo | image_url: width: 400 }}" class="cx-feature-logo" loading="lazy">
+        {% endif %}
 
-    <div class="cx-split-content">
-      {% if section.settings.feature_logo != blank %}
-        <img src="{{ section.settings.feature_logo | image_url: width: 400 }}" class="cx-feature-logo" loading="lazy">
-      {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="cx-split-title">{{ section.settings.title }}</h2>
+        {% endif %}
 
-      {% if section.settings.title != blank %}
-        <h2 class="cx-split-title">{{ section.settings.title }}</h2>
-      {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <div class="cx-split-subtitle">{{ section.settings.subtitle }}</div>
+        {% endif %}
 
-      {% if section.settings.subtitle != blank %}
-        <div class="cx-split-subtitle">{{ section.settings.subtitle }}</div>
-      {% endif %}
-
-      {% if section.settings.btn_label != blank %}
-        <a href="{{ section.settings.btn_link }}" class="cx-split-btn">{{ section.settings.btn_label }}</a>
-      {% endif %}
+        {% if section.settings.btn_label != blank %}
+          <a href="{{ section.settings.btn_link }}" class="cx-split-btn">
+            {{ section.settings.btn_label }}
+          </a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </section>
@@ -109,29 +149,29 @@
         { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
       ], "default": "left" },
     { "type": "checkbox", "id": "mob_img_first", "label": "Mobile: Image First?", "default": true },
-    { "type": "range", "id": "section_padding_t", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Top", "default": 40 },
-    { "type": "range", "id": "section_padding_b", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 40 },
+    { "type": "range", "id": "section_padding_t", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Top", "default": 60 },
+    { "type": "range", "id": "section_padding_b", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 60 },
     { "type": "header", "content": "2. Image Settings" },
     { "type": "image_picker", "id": "image_desktop", "label": "Desktop Image" },
     { "type": "image_picker", "id": "image_mobile", "label": "Mobile Image" },
-    { "type": "range", "id": "img_rounded", "min": 0, "max": 50, "label": "Corner Roundness", "default": 0 },
-    { "type": "header", "content": "3. Logo Settings" },
+    { "type": "range", "id": "img_rounded", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner Roundness", "default": 0 },
+    { "type": "header", "content": "3. Logo/Icon Settings" },
     { "type": "image_picker", "id": "feature_logo", "label": "Feature Logo/Icon" },
-    { "type": "range", "id": "logo_width", "min": 30, "max": 300, "step": 5, "label": "Logo Width", "default": 100 },
+    { "type": "range", "id": "logo_width", "min": 30, "max": 400, "step": 10, "label": "Logo Width", "default": 120 },
     { "type": "header", "content": "4. Content Settings" },
     { "type": "select", "id": "text_align", "label": "Text Alignment", "options": [
         { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
       ], "default": "left" },
     { "type": "text", "id": "title", "label": "Heading", "default": "Our Story" },
-    { "type": "color", "id": "title_color", "label": "Color", "default": "#000000" },
-    { "type": "range", "id": "title_size", "min": 20, "max": 80, "label": "Desktop Font Size", "default": 32 },
-    { "type": "range", "id": "title_size_mob", "min": 15, "max": 60, "label": "Mobile Font Size", "default": 24 },
-    { "type": "richtext", "id": "subtitle", "label": "Description", "default": "<p>Share details about your brand.</p>" },
-    { "type": "color", "id": "subtitle_color", "label": "Color", "default": "#444444" },
+    { "type": "color", "id": "title_color", "label": "Heading Color", "default": "#1a1a1a" },
+    { "type": "range", "id": "title_size", "min": 20, "max": 100, "label": "Desktop Font Size", "default": 42 },
+    { "type": "range", "id": "title_size_mob", "min": 15, "max": 80, "label": "Mobile Font Size", "default": 28 },
+    { "type": "richtext", "id": "subtitle", "label": "Description", "default": "<p>Share details about your brand story here.</p>" },
+    { "type": "color", "id": "subtitle_color", "label": "Description Color", "default": "#4a4a4a" },
     { "type": "range", "id": "subtitle_size", "min": 12, "max": 40, "label": "Desktop Font Size", "default": 18 },
     { "type": "range", "id": "subtitle_size_mob", "min": 10, "max": 30, "label": "Mobile Font Size", "default": 16 },
     { "type": "header", "content": "5. Button Settings" },
-    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Learn More" },
+    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Shop Now" },
     { "type": "url", "id": "btn_link", "label": "Button Link" },
     { "type": "color", "id": "btn_bg", "label": "Button Background", "default": "#000000" },
     { "type": "color", "id": "btn_text_color", "label": "Button Text", "default": "#ffffff" }

@@ -3,22 +3,27 @@
     background-color: {{ section.settings.bg_color }};
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: {{ section.settings.text_align }};
     justify-content: center;
     padding: 20px 0; 
   }
 
-  .cx-heading-container {
-    width: 90%;
+  /* 🟢 WRAPPER: Removed fixed max-width to allow global container control */
+  .cx-heading-wrapper {
+    width: 100%;
     margin: 0 auto;
+    padding: 0 20px; 
+  }
+
+  .cx-heading-container {
     display: flex;
     flex-direction: column;
     text-align: {{ section.settings.text_align }};
+    /* Align items logic for Flexbox based on text alignment */
+    align-items: {% if section.settings.text_align == 'left' %}flex-start{% elsif section.settings.text_align == 'right' %}flex-end{% else %}center{% endif %};
   }
 
-  .cx-main-title { margin: 0; line-height: 1.2; word-break: break-word; color: {{ section.settings.title_color }}; }
-  .cx-sub-title { margin: 0; line-height: 1.4; word-break: break-word; color: {{ section.settings.subtitle_color }}; }
+  .cx-main-title { margin: 0; line-height: 1.2; word-break: break-word; color: {{ section.settings.title_color }}; width: 100%; }
+  .cx-sub-title { margin: 0; line-height: 1.4; word-break: break-word; color: {{ section.settings.subtitle_color }}; width: 100%; }
 
   /* 🟢 Desktop Styles */
   @media screen and (min-width: 751px) {
@@ -68,29 +73,31 @@
 {%- endstyle -%}
 
 <div id="cx-heading-{{ section.id }}" class="cx-custom-heading-section">
-  <div class="cx-heading-container">
+  <div class="cx-heading-wrapper">
+    <div class="cx-heading-container">
 
-    {%- assign html_content = section.settings.custom_html | strip -%}
-    {% if html_content != blank %}
-      <div id="html-wrapper-{{ section.id }}" class="cx-custom-html-box">
-        {{ section.settings.custom_html }}
-      </div>
-    {% endif %}
+      {%- assign html_content = section.settings.custom_html | strip -%}
+      {% if html_content != blank %}
+        <div id="html-wrapper-{{ section.id }}" class="cx-custom-html-box">
+          {{ section.settings.custom_html }}
+        </div>
+      {% endif %}
 
-    {%- assign title_content = section.settings.title | strip -%}
-    {% if title_content != blank %}
-      <div id="title-wrapper-{{ section.id }}" class="cx-main-title-wrapper">
-        <h1 class="cx-main-title">{{ section.settings.title }}</h1>
-      </div>
-    {% endif %}
+      {%- assign title_content = section.settings.title | strip -%}
+      {% if title_content != blank %}
+        <div id="title-wrapper-{{ section.id }}" class="cx-main-title-wrapper">
+          <h1 class="cx-main-title">{{ section.settings.title }}</h1>
+        </div>
+      {% endif %}
 
-    {%- assign subtitle_content = section.settings.subtitle | strip -%}
-    {% if subtitle_content != blank %}
-      <div id="subtitle-wrapper-{{ section.id }}" class="cx-sub-title-wrapper">
-        <h2 class="cx-sub-title">{{ section.settings.subtitle }}</h2>
-      </div>
-    {% endif %}
+      {%- assign subtitle_content = section.settings.subtitle | strip -%}
+      {% if subtitle_content != blank %}
+        <div id="subtitle-wrapper-{{ section.id }}" class="cx-sub-title-wrapper">
+          <h2 class="cx-sub-title">{{ section.settings.subtitle }}</h2>
+        </div>
+      {% endif %}
 
+    </div>
   </div>
 </div>
 

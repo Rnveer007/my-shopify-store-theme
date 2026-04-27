@@ -1,0 +1,140 @@
+{%- style -%}
+  #cx-container-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    /* Spacing Controls */
+    padding-top: {{ section.settings.pt_d }}px;
+    padding-bottom: {{ section.settings.pb_d }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+  /* 🟢 BACKGROUND IMAGE LOGIC */
+  .cx-container-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+  }
+  .cx-container-bg img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .bg-desktop { display: block; }
+  .bg-mobile { display: none; }
+
+  /* 🟢 WIDTH & NO-GUTTER LOGIC */
+  .cx-container-inner {
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 20px;
+    transition: max-width 0.3s ease-in-out;
+    {% if section.settings.no_gutter %}
+      max-width: 1920px;
+    {% else %}
+      max-width: 1440px;
+    {% endif %}
+  }
+
+  @media screen and (max-width: 750px) {
+    #cx-container-{{ section.id }} {
+      padding-top: {{ section.settings.pt_m }}px;
+      padding-bottom: {{ section.settings.pb_m }}px;
+    }
+    .bg-desktop { display: none; }
+    .bg-mobile { display: block; }
+    
+    /* Agar mobile bg image khali hai toh desktop dikhao */
+    {% if section.settings.bg_img_m == blank %}
+      .bg-desktop { display: block; }
+      .bg-mobile { display: none; }
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<div id="cx-container-{{ section.id }}" class="cx-main-container-wrapper">
+  
+  {%- comment -%} Background Image Slot {%- endcomment -%}
+  <div class="cx-container-bg">
+    {% if section.settings.bg_img_d != blank %}
+      <img src="{{ section.settings.bg_img_d | image_url: width: 2000 }}" class="bg-desktop" loading="lazy">
+    {% endif %}
+    {% if section.settings.bg_img_m != blank %}
+      <img src="{{ section.settings.bg_img_m | image_url: width: 1000 }}" class="bg-mobile" loading="lazy">
+    {% endif %}
+  </div>
+
+  <div class="cx-container-inner">
+    {%- comment -%} 
+      Yahan hum 'Blocks' ka use karenge taaki tum is container ke andar 
+      Heading, Text ya Buttons add kar sako.
+    {%- endcomment -%}
+    {% for block in section.blocks %}
+      <div class="cx-block-item" {{ block.shopify_attributes }}>
+        {% case block.type %}
+          {% when 'liquid' %}
+            {{ block.settings.custom_liquid }}
+          {% when 'text' %}
+            <div style="text-align: center;">{{ block.settings.text }}</div>
+        {% endcase %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "CX-Container",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Container Width"
+    },
+    {
+      "type": "checkbox",
+      "id": "no_gutter",
+      "label": "No Gutter (Expand to 1920px)",
+      "default": false,
+      "info": "Click to expand from 1440px to 1920px"
+    },
+    {
+      "type": "header",
+      "content": "Background Settings"
+    },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "transparent" },
+    { "type": "image_picker", "id": "bg_img_d", "label": "Desktop BG Image" },
+    { "type": "image_picker", "id": "bg_img_m", "label": "Mobile BG Image" },
+    {
+      "type": "header",
+      "content": "Desktop Spacing"
+    },
+    { "type": "range", "id": "pt_d", "min": 0, "max": 200, "step": 5, "unit": "px", "label": "Padding Top", "default": 80 },
+    { "type": "range", "id": "pb_d", "min": 0, "max": 200, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 80 },
+    {
+      "type": "header",
+      "content": "Mobile Spacing"
+    },
+    { "type": "range", "id": "pt_m", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Top Mobile", "default": 40 },
+    { "type": "range", "id": "pb_m", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Bottom Mobile", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "Liquid/HTML Code" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Simple Text",
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Content", "default": "<p>Add your content here</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CX-Container"
+    }
+  ]
+}
+{% endschema %}
