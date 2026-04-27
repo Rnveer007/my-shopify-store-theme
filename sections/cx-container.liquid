@@ -1,17 +1,11 @@
 {%- style -%}
-  #cx-container-{{ section.id }} {
+  #cx-master-{{ section.id }} {
     background-color: {{ section.settings.bg_color }};
-    padding-top: {{ section.settings.pt_d }}px;
-    padding-bottom: {{ section.settings.pb_d }}px;
-    width: 100%;
-    position: relative;
+    padding: {{ section.settings.pt_d }}px 0 {{ section.settings.pb_d }}px 0;
   }
-
-  /* 🟢 THE WRAPPER LOGIC (1440px vs Full) */
-  .cx-container-inner {
+  .cx-master-wrapper {
     margin: 0 auto;
     width: 100%;
-    transition: max-width 0.3s ease-in-out;
     {% if section.settings.no_gutter %}
       max-width: 100%;
       padding: 0;
@@ -20,89 +14,104 @@
       padding: 0 20px;
     {% endif %}
   }
-
   @media screen and (max-width: 750px) {
-    #cx-container-{{ section.id }} {
-      padding-top: {{ section.settings.pt_m }}px;
-      padding-bottom: {{ section.settings.pb_m }}px;
+    #cx-master-{{ section.id }} {
+      padding: {{ section.settings.pt_m }}px 0 {{ section.settings.pb_m }}px 0;
     }
   }
 
-  /* Block spacing inside container */
-  .cx-nested-block { margin-bottom: {{ section.settings.block_gap }}px; width: 100%; }
-  .cx-nested-block:last-child { margin-bottom: 0; }
+  /* Split Block Styles */
+  .cx-block-split { display: flex; flex-wrap: wrap; align-items: center; gap: 30px; margin-bottom: 40px; }
+  .cx-block-split.rev { flex-direction: row-reverse; }
+  .cx-block-split > div { flex: 1; min-width: 300px; }
+  .cx-block-split img { width: 100%; border-radius: 10px; display: block; }
 {%- endstyle -%}
 
-<div id="cx-container-{{ section.id }}" class="cx-section-main-wrapper">
-  <div class="cx-container-inner">
-    
-    {%- for block in section.blocks -%}
-      <div class="cx-nested-block" {{ block.shopify_attributes }}>
+<div id="cx-master-{{ section.id }}">
+  <div class="cx-master-wrapper">
+    {% for block in section.blocks %}
+      <div class="cx-individual-block" {{ block.shopify_attributes }}>
         
-        {%- case block.type -%}
+        {% case block.type %}
           
-          {%- when 'heading' -%}
-            {%- comment -%} Copy of your CX Heading logic {%- endcomment -%}
-            <div style="text-align: {{ block.settings.align }};">
-              <h2 style="color: {{ block.settings.color }}; font-size: {{ block.settings.size }}px; margin: 0;">
+          {% when 'heading' %}
+            <div style="text-align: {{ block.settings.align }}; margin-bottom: 20px;">
+              <h2 style="font-size: {{ block.settings.size }}px; color: {{ block.settings.color }}; margin: 0;">
                 {{ block.settings.text }}
               </h2>
             </div>
 
-          {%- when 'liquid' -%}
-            {%- comment -%} For pasting custom section code {%- endcomment -%}
+          {% when 'split_feature' %}
+            <div class="cx-block-split {% if block.settings.img_pos == 'right' %}rev{% endif %}">
+              <div>
+                {% if block.settings.image != blank %}
+                  <img src="{{ block.settings.image | image_url: width: 800 }}">
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag }}
+                {% endif %}
+              </div>
+              <div style="text-align: {{ block.settings.text_align }};">
+                <h3 style="font-size: 24px; margin-bottom: 10px;">{{ block.settings.title }}</h3>
+                <div style="margin-bottom: 15px;">{{ block.settings.desc }}</div>
+                {% if block.settings.btn_label != blank %}
+                  <a href="{{ block.settings.btn_link }}" style="display: inline-block; padding: 10px 25px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">{{ block.settings.btn_label }}</a>
+                {% endif %}
+              </div>
+            </div>
+
+          {% when 'liquid' %}
             {{ block.settings.custom_liquid }}
 
-          {%- when '@app' -%}
-            {% render block %}
-
-        {%- endcase -%}
-        
+        {% endcase %}
       </div>
-    {%- endfor -%}
-
+    {% endfor %}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "CX Container",
+  "name": "CX Container Master",
   "settings": [
-    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (1920px / Full)", "default": false },
+    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (Full Width)", "default": false },
     { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
-    { "type": "header", "content": "Container Spacing" },
-    { "type": "range", "id": "block_gap", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Gap Between Blocks", "default": 20 },
-    { "type": "header", "content": "Padding (Desktop)" },
-    { "type": "range", "id": "pt_d", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Top", "default": 60 },
-    { "type": "range", "id": "pb_d", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Bottom", "default": 60 },
-    { "type": "header", "content": "Padding (Mobile)" },
-    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Top Mobile", "default": 30 },
-    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Bottom Mobile", "default": 30 }
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "pt_d", "min": 0, "max": 150, "label": "Top Padding Desktop", "default": 60 },
+    { "type": "range", "id": "pb_d", "min": 0, "max": 150, "label": "Bottom Padding Desktop", "default": 60 },
+    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "label": "Top Padding Mobile", "default": 30 },
+    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "label": "Bottom Padding Mobile", "default": 30 }
   ],
   "blocks": [
     {
       "type": "heading",
-      "name": "CX Heading (Nested)",
+      "name": "CX Heading",
       "settings": [
-        { "type": "text", "id": "text", "label": "Text", "default": "Heading Inside Container" },
+        { "type": "text", "id": "text", "label": "Heading", "default": "Our Heading" },
+        { "type": "range", "id": "size", "min": 10, "max": 80, "label": "Size", "default": 32 },
         { "type": "color", "id": "color", "label": "Color", "default": "#000000" },
-        { "type": "range", "id": "size", "min": 10, "max": 100, "label": "Font Size", "default": 32 },
-        { "type": "select", "id": "align", "label": "Alignment", "options": [
-            {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}
-          ], "default": "center"}
+        { "type": "select", "id": "align", "label": "Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" }
+      ]
+    },
+    {
+      "type": "split_feature",
+      "name": "CX Split Feature",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "select", "id": "img_pos", "label": "Image Position", "options": [{"value":"left","label":"Left"},{"value":"right","label":"Right"}], "default": "left" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Our Story" },
+        { "type": "richtext", "id": "desc", "label": "Description", "default": "<p>Add details about your brand.</p>" },
+        { "type": "text", "id": "btn_label", "label": "Button", "default": "Learn More" },
+        { "type": "url", "id": "btn_link", "label": "Link" },
+        { "type": "select", "id": "text_align", "label": "Text Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "left" }
       ]
     },
     {
       "type": "liquid",
-      "name": "Custom Liquid / HTML",
+      "name": "Custom Liquid/HTML",
       "settings": [
-        { "type": "liquid", "id": "custom_liquid", "label": "Custom Liquid Code" }
+        { "type": "liquid", "id": "custom_liquid", "label": "Code" }
       ]
-    },
-    {
-      "type": "@app"
     }
   ],
-  "presets": [ { "name": "CX Container" } ]
+  "presets": [ { "name": "CX Container Master" } ]
 }
 {% endschema %}
