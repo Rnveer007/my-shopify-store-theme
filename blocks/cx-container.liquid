@@ -1,0 +1,28 @@
+{%- style -%}
+  .cx-inner-container-{{ block.id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background-color: {{ block.settings.bg_color }};
+  }
+{%- endstyle -%}
+
+<div class="cx-inner-container-{{ block.id }}">
+  {%- comment -%} 
+    Ye line "Paste Inside" ko sambhalti hai 
+  {%- endcomment -%}
+  {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "CX Container Block",
+  "settings": [
+    { "type": "range", "id": "container_width", "min": 800, "max": 1600, "step": 10, "unit": "px", "label": "Width", "default": 1440 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "transparent" }
+  ],
+  "presets": [
+    { "name": "CX Container Block" }
+  ]
+}
+{% endschema %}
