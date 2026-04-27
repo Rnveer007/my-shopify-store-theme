@@ -1,0 +1,34 @@
+<div class="cx-main-container-wrapper" id="cx-cnt-{{ section.id }}">
+  <div class="cx-container-inner" style="max-width: {{ section.settings.container_width }}px; margin: 0 auto; padding: 0 20px;">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+<style>
+  #cx-cnt-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.pt }}px;
+    padding-bottom: {{ section.settings.pb }}px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "CX Container",
+  "settings": [
+    { "type": "range", "id": "container_width", "min": 800, "max": 1600, "step": 10, "unit": "px", "label": "Container Width", "default": 1200 },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "transparent" },
+    { "type": "range", "id": "pt", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Top", "default": 40 },
+    { "type": "range", "id": "pb", "min": 0, "max": 100, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 40 }
+  ],
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "CX Container"
+    }
+  ]
+}
+{% endschema %}
