@@ -1,140 +1,82 @@
 {%- style -%}
-  #cx-container-{{ section.id }} {
+  #cx-shell-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.pt_d }}px 0 {{ section.settings.pb_d }}px 0;
     position: relative;
     overflow: hidden;
-    /* Spacing Controls */
-    padding-top: {{ section.settings.pt_d }}px;
-    padding-bottom: {{ section.settings.pb_d }}px;
-    background-color: {{ section.settings.bg_color }};
   }
 
-  /* 🟢 BACKGROUND IMAGE LOGIC */
-  .cx-container-bg {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-  }
-  .cx-container-bg img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-
-  .bg-desktop { display: block; }
-  .bg-mobile { display: none; }
-
-  /* 🟢 WIDTH & NO-GUTTER LOGIC */
-  .cx-container-inner {
+  .cx-shell-inner {
     margin: 0 auto;
     width: 100%;
-    padding: 0 20px;
-    transition: max-width 0.3s ease-in-out;
+    transition: max-width 0.3s ease;
     {% if section.settings.no_gutter %}
       max-width: 1920px;
+      padding: 0;
     {% else %}
       max-width: 1440px;
+      padding: 0 20px;
     {% endif %}
   }
 
   @media screen and (max-width: 750px) {
-    #cx-container-{{ section.id }} {
-      padding-top: {{ section.settings.pt_m }}px;
-      padding-bottom: {{ section.settings.pb_m }}px;
+    #cx-shell-{{ section.id }} {
+      padding: {{ section.settings.pt_m }}px 0 {{ section.settings.pb_m }}px 0;
     }
-    .bg-desktop { display: none; }
-    .bg-mobile { display: block; }
-    
-    /* Agar mobile bg image khali hai toh desktop dikhao */
-    {% if section.settings.bg_img_m == blank %}
-      .bg-desktop { display: block; }
-      .bg-mobile { display: none; }
-    {% endif %}
   }
 {%- endstyle -%}
 
-<div id="cx-container-{{ section.id }}" class="cx-main-container-wrapper">
-  
-  {%- comment -%} Background Image Slot {%- endcomment -%}
-  <div class="cx-container-bg">
-    {% if section.settings.bg_img_d != blank %}
-      <img src="{{ section.settings.bg_img_d | image_url: width: 2000 }}" class="bg-desktop" loading="lazy">
-    {% endif %}
-    {% if section.settings.bg_img_m != blank %}
-      <img src="{{ section.settings.bg_img_m | image_url: width: 1000 }}" class="bg-mobile" loading="lazy">
-    {% endif %}
-  </div>
-
-  <div class="cx-container-inner">
-    {%- comment -%} 
-      Yahan hum 'Blocks' ka use karenge taaki tum is container ke andar 
-      Heading, Text ya Buttons add kar sako.
-    {%- endcomment -%}
+<section id="cx-shell-{{ section.id }}">
+  <div class="cx-shell-inner">
     {% for block in section.blocks %}
-      <div class="cx-block-item" {{ block.shopify_attributes }}>
+      <div class="cx-container-block" {{ block.shopify_attributes }}>
+        
         {% case block.type %}
-          {% when 'liquid' %}
-            {{ block.settings.custom_liquid }}
-          {% when 'text' %}
-            <div style="text-align: center;">{{ block.settings.text }}</div>
+          
+          {% when 'heading_block' %}
+            {%- comment -%} Is block mein Heading ka logic dalo {%- endcomment -%}
+            <div style="text-align: {{ block.settings.align }}; margin-bottom: 20px;">
+               <h2 style="font-size: {{ block.settings.size }}px; color: {{ block.settings.color }};">{{ block.settings.text }}</h2>
+            </div>
+
+          {% when 'split_feature_block' %}
+            {%- comment -%} Is block mein Split Feature ka logic dalo {%- endcomment -%}
+            {% render 'cx-split-logic', block: block %}
+
         {% endcase %}
+        
       </div>
     {% endfor %}
   </div>
-</div>
+</section>
 
 {% schema %}
 {
-  "name": "CX-Container",
+  "name": "CX-Ultimate-Container",
   "settings": [
-    {
-      "type": "header",
-      "content": "Container Width"
-    },
-    {
-      "type": "checkbox",
-      "id": "no_gutter",
-      "label": "No Gutter (Expand to 1920px)",
-      "default": false,
-      "info": "Click to expand from 1440px to 1920px"
-    },
-    {
-      "type": "header",
-      "content": "Background Settings"
-    },
-    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "transparent" },
-    { "type": "image_picker", "id": "bg_img_d", "label": "Desktop BG Image" },
-    { "type": "image_picker", "id": "bg_img_m", "label": "Mobile BG Image" },
-    {
-      "type": "header",
-      "content": "Desktop Spacing"
-    },
-    { "type": "range", "id": "pt_d", "min": 0, "max": 200, "step": 5, "unit": "px", "label": "Padding Top", "default": 80 },
-    { "type": "range", "id": "pb_d", "min": 0, "max": 200, "step": 5, "unit": "px", "label": "Padding Bottom", "default": 80 },
-    {
-      "type": "header",
-      "content": "Mobile Spacing"
-    },
-    { "type": "range", "id": "pt_m", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Top Mobile", "default": 40 },
-    { "type": "range", "id": "pb_m", "min": 0, "max": 150, "step": 5, "unit": "px", "label": "Padding Bottom Mobile", "default": 40 }
+    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (1920px)", "default": false },
+    { "type": "color", "id": "bg_color", "label": "BG Color", "default": "#ffffff" },
+    { "type": "header", "content": "Desktop Spacing" },
+    { "type": "range", "id": "pt_d", "min": 0, "max": 150, "label": "Top", "default": 60 },
+    { "type": "range", "id": "pb_d", "min": 0, "max": 150, "label": "Bottom", "default": 60 },
+    { "type": "header", "content": "Mobile Spacing" },
+    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "label": "Top Mobile", "default": 30 },
+    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "label": "Bottom Mobile", "default": 30 }
   ],
   "blocks": [
     {
-      "type": "liquid",
-      "name": "Custom Liquid",
+      "type": "heading_block",
+      "name": "Heading Block",
       "settings": [
-        { "type": "liquid", "id": "custom_liquid", "label": "Liquid/HTML Code" }
-      ]
-    },
-    {
-      "type": "text",
-      "name": "Simple Text",
-      "settings": [
-        { "type": "richtext", "id": "text", "label": "Content", "default": "<p>Add your content here</p>" }
+        { "type": "text", "id": "text", "label": "Heading", "default": "Block Heading" },
+        { "type": "color", "id": "color", "label": "Color", "default": "#000000" },
+        { "type": "range", "id": "size", "min": 20, "max": 80, "label": "Size", "default": 32 },
+        { "type": "select", "id": "align", "label": "Align", "options": [
+            {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}
+          ], "default": "center"}
       ]
     }
   ],
-  "presets": [
-    {
-      "name": "CX-Container"
-    }
-  ]
+  "presets": [ { "name": "CX-Ultimate-Container" } ]
 }
 {% endschema %}
