@@ -1,0 +1,47 @@
+{%- style -%}
+  .cx-block-container-{{ block.id }} {
+    background: {{ block.settings.background_color }};
+    padding-top: {{ block.settings.top_padding }}px;
+    padding-bottom: {{ block.settings.bottom_padding }}px;
+    width: 100%;
+  }
+  .cx-container-inner {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+{%- endstyle -%}
+
+<div class="cx-block-container-{{ block.id }}">
+  <div class="cx-container-inner">
+    {%- comment -%} 
+      🟢 YE LINE HI "PASTE INSIDE" ENABLE KARTI HAI 
+    {%- endcomment -%}
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "CX Container",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1920,
+      "step": 20,
+      "unit": "px",
+      "label": "Container Width",
+      "default": 1440
+    },
+    { "type": "color", "id": "background_color", "label": "BG Color", "default": "#ffffff" },
+    { "type": "range", "id": "top_padding", "min": 0, "max": 100, "step": 5, "label": "Top Padding", "default": 40 },
+    { "type": "range", "id": "bottom_padding", "min": 0, "max": 100, "step": 5, "label": "Bottom Padding", "default": 40 }
+  ],
+  "presets": [
+    { "name": "CX Container" }
+  ]
+}
+{% endschema %}
