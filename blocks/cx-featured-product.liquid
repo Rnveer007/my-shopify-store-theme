@@ -1,42 +1,117 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-<div class="cx-slider-section" id="section-{{ section.id }}">
-  <div class="cx-slider-wrapper">
-    {% if section.settings.title != blank %}
-      <h2 class="section-main-title">{{ section.settings.title }}</h2>
+{%- style -%}
+  #block-{{ block.id }} { 
+    padding: 40px 0; 
+    background-color: {{ block.settings.bg_color }}; 
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .cx-slider-wrapper-{{ block.id }} { 
+    width: 100%; 
+    margin: 0 auto; 
+    position: relative; 
+  }
+
+  .title-{{ block.id }} { 
+    text-align: center; 
+    font-size: 2rem; 
+    margin-bottom: 30px; 
+    font-weight: bold; 
+    color: #000;
+  }
+
+  /* Card Styling */
+  .card-{{ block.id }} { background: #fff; transition: transform 0.3s ease; }
+  .card-{{ block.id }}:hover { transform: translateY(-5px); }
+  
+  .img-wrap-{{ block.id }} { 
+    aspect-ratio: 1/1.2; 
+    background: #f5f5f5; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    position: relative; 
+  }
+  .img-wrap-{{ block.id }} img { width: 100%; height: 100%; object-fit: cover; }
+  
+  .badge-{{ block.id }} { 
+    position: absolute; top: 10px; left: 10px; 
+    background: #ff4444; color: #fff; 
+    padding: 4px 10px; font-size: 10px; 
+    border-radius: 4px; font-weight: bold; 
+  }
+
+  .info-{{ block.id }} { 
+    padding: 15px 5px; 
+    text-align: {{ block.settings.text_align }}; 
+  }
+  .product-title-{{ block.id }} { 
+    font-size: 16px; margin-bottom: 8px; color: #111; 
+    font-weight: 500; text-decoration: none; 
+    display: block;
+  }
+  
+  .price-curr-{{ block.id }} { font-weight: 700; color: #000; }
+  .price-old-{{ block.id }} { color: #999; text-decoration: line-through; margin-left: 8px; font-size: 14px; }
+
+  /* Navigation Arrows */
+  .next-{{ block.id }}, .prev-{{ block.id }} { 
+    background: #fff; width: 40px; height: 40px; 
+    border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); color: #000; 
+  }
+  .next-{{ block.id }}:after, .prev-{{ block.id }}:after { font-size: 16px; }
+
+  /* Mobile Grid Mode Logic */
+  @media screen and (max-width: 768px) {
+    .grid-mode-{{ block.id }} .swiper-wrapper { 
+      display: grid !important; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 15px; 
+      transform: none !important; 
+    }
+    .grid-mode-{{ block.id }} .swiper-slide { width: 100% !important; }
+    .grid-mode-{{ block.id }} .next-{{ block.id }}, .grid-mode-{{ block.id }} .prev-{{ block.id }} { display: none; }
+  }
+{%- endstyle -%}
+
+<div id="block-{{ block.id }}" class="cx-slider-block">
+  <div class="cx-slider-wrapper-{{ block.id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="title-{{ block.id }}">{{ block.settings.title }}</h2>
     {% endif %}
 
-    <div class="swiper cxSwiper-{{ section.id }} {% if section.settings.mobile_layout == 'column' %}mobile-grid-mode{% endif %}">
+    <div class="swiper swiper-{{ block.id }} {% if block.settings.mobile_layout == 'column' %}grid-mode-{{ block.id }}{% endif %}">
       <div class="swiper-wrapper">
         
         {%- liquid
-          assign products_to_display = section.settings.product_list
+          assign products_to_display = block.settings.product_list
           if products_to_display == blank
-            assign products_to_display = section.settings.collection.products
+            assign products_to_display = block.settings.collection.products
           endif
         -%}
         
-        {%- for product in products_to_display limit: section.settings.products_to_show -%}
+        {%- for product in products_to_display limit: block.settings.products_to_show -%}
           <div class="swiper-slide">
-            <div class="cx-product-card">
-              <a href="{{ product.url }}" class="card-link">
-                <div class="card-image-wrapper">
+            <div class="card-{{ block.id }}">
+              <a href="{{ product.url }}" style="text-decoration: none;">
+                <div class="img-wrap-{{ block.id }}">
                   {% if product.compare_at_price > product.price %}
-                    <span class="grid-sale-badge">SALE</span>
+                    <span class="badge-{{ block.id }}">SALE</span>
                   {% endif %}
                   <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title }}" loading="lazy">
                 </div>
 
-                <div class="card-info">
-                  {% if section.settings.show_name %}
-                    <h3 class="card-title">{{ product.title }}</h3>
+                <div class="info-{{ block.id }}">
+                  {% if block.settings.show_name %}
+                    <span class="product-title-{{ block.id }}">{{ product.title }}</span>
                   {% endif %}
                   
-                  {% if section.settings.show_price %}
-                    <div class="card-price">
-                      <span class="price-current">{{ product.price | money }}</span>
+                  {% if block.settings.show_price %}
+                    <div class="price-box">
+                      <span class="price-curr-{{ block.id }}">{{ product.price | money }}</span>
                       {% if product.compare_at_price > product.price %}
-                        <span class="price-old">{{ product.compare_at_price | money }}</span>
+                        <span class="price-old-{{ block.id }}">{{ product.compare_at_price | money }}</span>
                       {% endif %}
                     </div>
                   {% endif %}
@@ -45,87 +120,53 @@
             </div>
           </div>
         {%- else -%}
-          <p style="text-align:center; width:100%;">Please select a Collection or add Products manually.</p>
+          <p style="text-align:center; width:100%;">Add products to show the slider.</p>
         {%- endfor -%}
       </div>
 
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next next-{{ block.id }}"></div>
+      <div class="swiper-button-prev prev-{{ block.id }}"></div>
     </div>
   </div>
 </div>
 
-<style>
-  #section-{{ section.id }} { 
-    padding: 60px 0; 
-    background-color: {{ section.settings.bg_color }}; 
-    width: 100%;
-    overflow: hidden; /* Important for Swiper sliders */
-  }
-
-  /* 🟢 WRAPPER: Removed fixed max-width to obey global container */
-  .cx-slider-wrapper { 
-    width: 100%; 
-    margin: 0 auto; 
-    position: relative; 
-    padding: 0 20px;
-  }
-
-  .section-main-title { text-align: center; font-size: 2rem; margin-bottom: 40px; font-weight: bold; }
-
-  /* Card Styling */
-  .cx-product-card { background: #fff; transition: transform 0.3s ease; }
-  .cx-product-card:hover { transform: translateY(-5px); }
-  .card-image-wrapper { aspect-ratio: 1/1.2; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; }
-  .card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-  
-  .grid-sale-badge { position: absolute; top: 10px; left: 10px; background: #ff4444; color: #fff; padding: 4px 10px; font-size: 10px; border-radius: 4px; font-weight: bold; }
-
-  .card-info { padding: 20px 10px; text-align: {{ section.settings.text_align }}; }
-  .card-title { font-size: 16px; margin-bottom: 8px; color: #111; font-weight: 500; text-decoration: none; }
-  .card-link { text-decoration: none; }
-  .price-current { font-weight: 700; color: #000; }
-  .price-old { color: #999; text-decoration: line-through; margin-left: 8px; font-size: 14px; }
-
-  /* Swiper Arrows */
-  .swiper-button-next, .swiper-button-prev { background: #fff; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); color: #000; }
-  .swiper-button-next:after, .swiper-button-prev:after { font-size: 18px; font-weight: bold; }
-
-  /* Mobile Grid Mode */
-  @media screen and (max-width: 768px) {
-    .mobile-grid-mode .swiper-wrapper { display: grid !important; grid-template-columns: 1fr 1fr; gap: 15px; transform: none !important; }
-    .mobile-grid-mode .swiper-slide { width: 100% !important; }
-    .mobile-grid-mode .swiper-button-next, .mobile-grid-mode .swiper-button-prev { display: none; }
-  }
-</style>
-
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-  // Initializing only if grid mode is off for mobile
-  document.addEventListener('DOMContentLoaded', function() {
-    new Swiper(".cxSwiper-{{ section.id }}", {
-      slidesPerView: 2,
-      spaceBetween: 20,
-      navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-      breakpoints: {
-        1024: { slidesPerView: {{ section.settings.cols_desktop }} }
-      }
-    });
-  });
+  (function() {
+    const initSwiper = () => {
+      new Swiper(".swiper-{{ block.id }}", {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        navigation: { 
+          nextEl: ".next-{{ block.id }}", 
+          prevEl: ".prev-{{ block.id }}" 
+        },
+        breakpoints: {
+          1024: { slidesPerView: {{ block.settings.cols_desktop }} }
+        }
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSwiper);
+    } else {
+      initSwiper();
+    }
+  })();
 </script>
 
 {% schema %}
 {
-  "name": "CX Premium Slider v2",
+  "name": "CX Product Slider",
   "settings": [
     { "type": "text", "id": "title", "label": "Heading", "default": "Featured Products" },
     { "type": "header", "content": "Product Selection" },
-    { "type": "product_list", "id": "product_list", "label": "Option 1: Manual Products", "limit": 12 },
-    { "type": "collection", "id": "collection", "label": "Option 2: From Collection" },
+    { "type": "product_list", "id": "product_list", "label": "Manual Products", "limit": 12 },
+    { "type": "collection", "id": "collection", "label": "From Collection" },
     { "type": "header", "content": "Layout Controls" },
-    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "label": "Max Products to Show", "default": 8 },
-    { "type": "range", "id": "cols_desktop", "min": 3, "max": 6, "step": 1, "label": "Columns on Desktop", "default": 4 },
-    { "type": "select", "id": "mobile_layout", "label": "Mobile View", "options": [
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "label": "Max Products", "default": 8 },
+    { "type": "range", "id": "cols_desktop", "min": 3, "max": 6, "step": 1, "label": "Desktop Columns", "default": 4 },
+    { "type": "select", "id": "mobile_layout", "label": "Mobile Layout", "options": [
         { "value": "slider", "label": "Slider" },
         { "value": "column", "label": "2 Column Grid" }
       ], "default": "slider" },
@@ -134,10 +175,10 @@
         { "value": "center", "label": "Center" }
       ], "default": "center" },
     { "type": "header", "content": "Visibility" },
-    { "type": "checkbox", "id": "show_name", "label": "Show Product Name", "default": true },
+    { "type": "checkbox", "id": "show_name", "label": "Show Name", "default": true },
     { "type": "checkbox", "id": "show_price", "label": "Show Price", "default": true },
-    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" }
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "transparent" }
   ],
-  "presets": [ { "name": "CX Premium Slider v2" } ]
+  "presets": [ { "name": "CX Product Slider" } ]
 }
 {% endschema %}

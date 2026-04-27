@@ -1,99 +1,111 @@
 {%- style -%}
-  #cx-heading-{{ section.id }} {
-    background-color: {{ section.settings.bg_color }};
+  /* Unique ID for each block instance */
+  #cx-heading-{{ block.id }} {
+    background-color: {{ block.settings.bg_color }};
     width: 100%;
     display: flex;
     justify-content: center;
     padding: 20px 0; 
   }
 
-  /* 🟢 WRAPPER: Removed fixed max-width to allow global container control */
-  .cx-heading-wrapper {
+  .cx-heading-wrapper-{{ block.id }} {
     width: 100%;
     margin: 0 auto;
     padding: 0 20px; 
   }
 
-  .cx-heading-container {
+  .cx-heading-container-{{ block.id }} {
     display: flex;
     flex-direction: column;
-    text-align: {{ section.settings.text_align }};
-    /* Align items logic for Flexbox based on text alignment */
-    align-items: {% if section.settings.text_align == 'left' %}flex-start{% elsif section.settings.text_align == 'right' %}flex-end{% else %}center{% endif %};
+    text-align: {{ block.settings.text_align }};
+    align-items: {% if block.settings.text_align == 'left' %}flex-start{% elsif block.settings.text_align == 'right' %}flex-end{% else %}center{% endif %};
   }
 
-  .cx-main-title { margin: 0; line-height: 1.2; word-break: break-word; color: {{ section.settings.title_color }}; width: 100%; }
-  .cx-sub-title { margin: 0; line-height: 1.4; word-break: break-word; color: {{ section.settings.subtitle_color }}; width: 100%; }
+  .cx-main-title-{{ block.id }} { 
+    margin: 0; 
+    line-height: 1.2; 
+    word-break: break-word; 
+    color: {{ block.settings.title_color }}; 
+    width: 100%; 
+  }
+  
+  .cx-sub-title-{{ block.id }} { 
+    margin: 0; 
+    line-height: 1.4; 
+    word-break: break-word; 
+    color: {{ block.settings.subtitle_color }}; 
+    width: 100%; 
+  }
 
   /* 🟢 Desktop Styles */
   @media screen and (min-width: 751px) {
-    .cx-main-title { font-size: {{ section.settings.title_size }}px; }
-    .cx-sub-title { font-size: {{ section.settings.subtitle_size }}px; }
+    .cx-main-title-{{ block.id }} { font-size: {{ block.settings.title_size }}px; }
+    .cx-sub-title-{{ block.id }} { font-size: {{ block.settings.subtitle_size }}px; }
     
-    #title-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.title_mt }}px;
-      margin-bottom: {{ section.settings.title_mb }}px;
-      padding-top: {{ section.settings.title_pt }}px;
-      padding-bottom: {{ section.settings.title_pb }}px;
+    #title-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.title_mt }}px;
+      margin-bottom: {{ block.settings.title_mb }}px;
+      padding-top: {{ block.settings.title_pt }}px;
+      padding-bottom: {{ block.settings.title_pb }}px;
     }
-    #subtitle-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.subtitle_mt }}px;
-      margin-bottom: {{ section.settings.subtitle_mb }}px;
-      padding-top: {{ section.settings.subtitle_pt }}px;
-      padding-bottom: {{ section.settings.subtitle_pb }}px;
+    #subtitle-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.subtitle_mt }}px;
+      margin-bottom: {{ block.settings.subtitle_mb }}px;
+      padding-top: {{ block.settings.subtitle_pt }}px;
+      padding-bottom: {{ block.settings.subtitle_pb }}px;
     }
-    #html-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.html_mt }}px;
-      margin-bottom: {{ section.settings.html_mb }}px;
+    #html-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.html_mt }}px;
+      margin-bottom: {{ block.settings.html_mb }}px;
     }
   }
 
   /* 🟢 Mobile Styles */
   @media screen and (max-width: 750px) {
-    .cx-main-title { font-size: {{ section.settings.title_size_mobile }}px; }
-    .cx-sub-title { font-size: {{ section.settings.subtitle_size_mobile }}px; }
+    .cx-main-title-{{ block.id }} { font-size: {{ block.settings.title_size_mobile }}px; }
+    .cx-sub-title-{{ block.id }} { font-size: {{ block.settings.subtitle_size_mobile }}px; }
 
-    #title-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.title_mt_m }}px !important;
-      margin-bottom: {{ section.settings.title_mb_m }}px !important;
-      padding-top: {{ section.settings.title_pt_m }}px !important;
-      padding-bottom: {{ section.settings.title_pb_m }}px !important;
+    #title-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.title_mt_m }}px !important;
+      margin-bottom: {{ block.settings.title_mb_m }}px !important;
+      padding-top: {{ block.settings.title_pt_m }}px !important;
+      padding-bottom: {{ block.settings.title_pb_m }}px !important;
     }
-    #subtitle-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.subtitle_mt_m }}px !important;
-      margin-bottom: {{ section.settings.subtitle_mb_m }}px !important;
-      padding-top: {{ section.settings.subtitle_pt_m }}px !important;
-      padding-bottom: {{ section.settings.subtitle_pb_m }}px !important;
+    #subtitle-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.subtitle_mt_m }}px !important;
+      margin-bottom: {{ block.settings.subtitle_mb_m }}px !important;
+      padding-top: {{ block.settings.subtitle_pt_m }}px !important;
+      padding-bottom: {{ block.settings.subtitle_pb_m }}px !important;
     }
-    #html-wrapper-{{ section.id }} {
-      margin-top: {{ section.settings.html_mt_m }}px !important;
-      margin-bottom: {{ section.settings.html_mb_m }}px !important;
+    #html-wrapper-{{ block.id }} {
+      margin-top: {{ block.settings.html_mt_m }}px !important;
+      margin-bottom: {{ block.settings.html_mb_m }}px !important;
     }
   }
 {%- endstyle -%}
 
-<div id="cx-heading-{{ section.id }}" class="cx-custom-heading-section">
-  <div class="cx-heading-wrapper">
-    <div class="cx-heading-container">
+<div id="cx-heading-{{ block.id }}" class="cx-custom-heading-block">
+  <div class="cx-heading-wrapper-{{ block.id }}">
+    <div class="cx-heading-container-{{ block.id }}">
 
-      {%- assign html_content = section.settings.custom_html | strip -%}
+      {%- assign html_content = block.settings.custom_html | strip -%}
       {% if html_content != blank %}
-        <div id="html-wrapper-{{ section.id }}" class="cx-custom-html-box">
-          {{ section.settings.custom_html }}
+        <div id="html-wrapper-{{ block.id }}" class="cx-custom-html-box">
+          {{ block.settings.custom_html }}
         </div>
       {% endif %}
 
-      {%- assign title_content = section.settings.title | strip -%}
+      {%- assign title_content = block.settings.title | strip -%}
       {% if title_content != blank %}
-        <div id="title-wrapper-{{ section.id }}" class="cx-main-title-wrapper">
-          <h1 class="cx-main-title">{{ section.settings.title }}</h1>
+        <div id="title-wrapper-{{ block.id }}" class="cx-main-title-wrapper">
+          <h1 class="cx-main-title-{{ block.id }}">{{ block.settings.title }}</h1>
         </div>
       {% endif %}
 
-      {%- assign subtitle_content = section.settings.subtitle | strip -%}
+      {%- assign subtitle_content = block.settings.subtitle | strip -%}
       {% if subtitle_content != blank %}
-        <div id="subtitle-wrapper-{{ section.id }}" class="cx-sub-title-wrapper">
-          <h2 class="cx-sub-title">{{ section.settings.subtitle }}</h2>
+        <div id="subtitle-wrapper-{{ block.id }}" class="cx-sub-title-wrapper">
+          <h2 class="cx-sub-title-{{ block.id }}">{{ block.settings.subtitle }}</h2>
         </div>
       {% endif %}
 
