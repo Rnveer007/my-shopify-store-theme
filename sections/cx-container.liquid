@@ -1,431 +1,94 @@
-{% comment %}
-  CX Container (theme block). Copy of sections/cx-container.liquid for use as a block.
-  Renders layout, background, and inner content. No scheduling or visibility—handled by parent section if needed.
-{% endcomment %}
-
-{% # theme-check-disable %}
-{%- unless cx_container_assets_loaded -%}
-  {{ 'cx-container.css' | asset_url | stylesheet_tag }}
-  {%- assign cx_container_assets_loaded = true -%}
-{%- endunless -%}
-{% # theme-check-enable %}
-
-{%- liquid
-  assign custom_id = block.settings.custom_id | default: '' | strip
-  if custom_id == blank or custom_id == 'auto'
-    assign custom_id = 'cx-container-' | append: block.id
-  endif
-
-  assign top_spacing = block.settings.top_spacing | default: 'none'
-  assign layout_width = block.settings.layout_width | default: 'boxed'
-  assign container_alignment = block.settings.container_alignment | default: 'center'
-  assign top_overhang = block.settings.top_overhang | default: 'none'
-  assign layout_class = 'is-full'
-  if layout_width == 'boxed'
-    assign layout_class = 'is-boxed'
-  endif
-
-  assign background_color = block.settings.background_color
-  assign gradient_end = block.settings.gradient_end
-  assign gradient_direction = block.settings.gradient_direction | default: 'to bottom'
-  assign top_padding = block.settings.top_padding | default: 50
-  assign bottom_padding = block.settings.bottom_padding | default: 50
-  assign top_padding_desktop = block.settings.top_padding_desktop | default: top_padding
-  assign bottom_padding_desktop = block.settings.bottom_padding_desktop | default: bottom_padding
-  assign background_border_radius = block.settings.background_border_radius | default: 0
-  assign background_image = block.settings.background_image
-  assign background_image_fit = block.settings.background_image_fit | default: 'cover'
-
-  comment
-    Build background value: if gradient_end is blank or same as background_color, use solid color
-  endcomment
-  assign computed_bg = background_color
-  if gradient_end != blank and gradient_end != background_color
-    assign computed_bg = 'linear-gradient(' | append: gradient_direction | append: ', ' | append: background_color | append: ', ' | append: gradient_end | append: ')'
-  endif
-
-  assign has_bg = false
-  if background_color != blank and background_color != 'transparent' and background_color != 'rgba(0,0,0,0)'
-    assign has_bg = true
-  endif
-
-  assign max_width_setting = block.settings.max_width | default: 'standard'
-  assign max_width_value = '1440px'
-  if max_width_setting == 'wide'
-    assign max_width_value = '1200px'
-  elsif max_width_setting == 'medium'
-    assign max_width_value = '1000px'
-  elsif max_width_setting == 'narrow'
-    assign max_width_value = '800px'
-  elsif max_width_setting == 'full'
-    assign max_width_value = '100%'
-  endif
-
-  assign disable_desktop_background = block.settings.disable_desktop_background | default: false
-  assign no_gutter = block.settings.no_gutter | default: false
-
-  assign container_link = block.settings.link
-  assign container_link_new_tab = block.settings.link_new_tab | default: false
-  assign container_link_label = block.settings.link_label | default: '' | strip
-
-  assign drop_shadow = block.settings.drop_shadow | default: 'none'
-  assign cx_box_shadow_value = 'none'
-  case drop_shadow
-    when 'cx_default'
-      assign cx_box_shadow_value = 'var(--cx-box-shadow-default)'
-    when 'theme_popover'
-      assign cx_box_shadow_value = 'var(--shadow-popover)'
-    when 'theme_drawer'
-      assign cx_box_shadow_value = 'var(--shadow-drawer)'
-    when 'theme_button'
-      assign cx_box_shadow_value = 'var(--shadow-button)'
-    else
-      assign cx_box_shadow_value = 'none'
-  endcase
--%}
-
-{%- if container_link != blank -%}
-  <a
-    href="{{ container_link }}"
-    class="custom-container cx-container {{ layout_class }} cx-container--align-{{ container_alignment }} cx-overhang--{{ top_overhang }}{% if layout_class == 'is-boxed' and has_bg %} has-bg{% endif %}{% if background_image != blank %} cx-container--has-bg-image{% endif %}{% if disable_desktop_background %} cx-container--disable-desktop-bg{% endif %}{% if no_gutter %} cx-container--no-gutter{% endif %} cx-top-spacing--{{ top_spacing }}"
-    id="{{ custom_id | escape }}"
-    data-cx-container="true"
-    style="
-      --section-padding-top: {{ top_padding }}px;
-      --section-padding-bottom: {{ bottom_padding }}px;
-      --section-padding-top-desktop: {{ top_padding_desktop }}px;
-      --section-padding-bottom-desktop: {{ bottom_padding_desktop }}px;
-      --cx-container-top-padding: {{ top_padding }}px;
-      --section-background: {{ computed_bg }};
-      --custom-container-max-width: {{ max_width_value }};
-      --cx-container-background-radius: {{ background_border_radius }}px;
-      --cx-container-bg-image-fit: {{ background_image_fit }};
-      --cx-container-box-shadow: {{ cx_box_shadow_value }};
-    "
-    {% if container_link_new_tab %}
-      target="_blank"
-      rel="noopener noreferrer"
-    {% endif %}
-    {% if container_link_label != blank %}
-      aria-label="{{ container_link_label | escape }}"
+{%- style -%}
+  #cx-master-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding: {{ section.settings.pt_d }}px 0 {{ section.settings.pb_d }}px 0;
+  }
+  .cx-container-inner {
+    margin: 0 auto;
+    width: 100%;
+    {% if section.settings.no_gutter %}
+      max-width: 100%;
+      padding: 0;
     {% else %}
-      aria-label="{{ 'cx_container.accessibility.link_default' | t }}"
+      max-width: 1440px;
+      padding: 0 20px;
     {% endif %}
-    {{ block.shopify_attributes }}
-  >
-{%- else -%}
-  <div
-    class="custom-container cx-container {{ layout_class }} cx-container--align-{{ container_alignment }} cx-overhang--{{ top_overhang }}{% if layout_class == 'is-boxed' and has_bg %} has-bg{% endif %}{% if background_image != blank %} cx-container--has-bg-image{% endif %}{% if disable_desktop_background %} cx-container--disable-desktop-bg{% endif %}{% if no_gutter %} cx-container--no-gutter{% endif %} cx-top-spacing--{{ top_spacing }}"
-    id="{{ custom_id | escape }}"
-    data-cx-container="true"
-    style="
-      --section-padding-top: {{ top_padding }}px;
-      --section-padding-bottom: {{ bottom_padding }}px;
-      --section-padding-top-desktop: {{ top_padding_desktop }}px;
-      --section-padding-bottom-desktop: {{ bottom_padding_desktop }}px;
-      --cx-container-top-padding: {{ top_padding }}px;
-      --section-background: {{ computed_bg }};
-      --custom-container-max-width: {{ max_width_value }};
-      --cx-container-background-radius: {{ background_border_radius }}px;
-      --cx-container-bg-image-fit: {{ background_image_fit }};
-      --cx-container-box-shadow: {{ cx_box_shadow_value }};
-    "
-    {{ block.shopify_attributes }}
-  >
-{%- endif -%}
-  {% if background_image != blank %}
-    <div class="cx-container__bg" aria-hidden="true">
-      {{
-        background_image
-        | image_url: width: 2400
-        | image_tag:
-          class: 'cx-container__bg-image',
-          loading: 'lazy',
-          alt: '',
-          widths: '375, 550, 750, 990, 1200, 1500, 2000, 2400',
-          sizes: '100vw'
-      }}
-    </div>
-  {% endif %}
-  <div class="custom-container__inner">
-    {% content_for 'blocks' %}
+  }
+  @media screen and (max-width: 750px) {
+    #cx-master-{{ section.id }} { padding: {{ section.settings.pt_m }}px 0 {{ section.settings.pb_m }}px 0; }
+  }
+  .cx-block-wrapper { margin-bottom: 30px; width: 100%; }
+{%- endstyle -%}
+
+<div id="cx-master-{{ section.id }}">
+  <div class="cx-container-inner">
+    {% for block in section.blocks %}
+      <div class="cx-block-wrapper" {{ block.shopify_attributes }}>
+        {% case block.type %}
+          
+          {% when 'heading' %}
+            <div style="text-align: {{ block.settings.align }};">
+              <h2 style="font-size: {{ block.settings.size }}px; color: {{ block.settings.color }}; margin: 0;">{{ block.settings.text }}</h2>
+            </div>
+
+          {% when 'split' %}
+             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 30px; flex-direction: {% if block.settings.pos == 'right' %}row-reverse{% else %}row{% endif %};">
+                <div style="flex: 1; min-width: 300px;">
+                  <img src="{{ block.settings.img | image_url: width: 800 }}" style="width: 100%; border-radius: 10px;">
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                  <h3>{{ block.settings.title }}</h3>
+                  <div>{{ block.settings.desc }}</div>
+                </div>
+             </div>
+
+          {% when 'liquid' %}
+            {{ block.settings.custom_liquid }}
+
+        {% endcase %}
+      </div>
+    {% endfor %}
   </div>
-{%- if container_link != blank -%}
-</a>
-{%- else -%}
 </div>
-{%- endif -%}
 
 {% schema %}
 {
-  "name": "CX Container",
-  "tag": null,
-  "blocks": [
-    { "type": "cx-layout" },
-    { "type": "cx-media" },
-    { "type": "cx-element" },
-    { "type": "cx-overlay" },
-    { "type": "cx-heading" },
-    { "type": "cx-custom-heading" },
-    { "type": "cx-custom-heading-overlay" },
-    { "type": "cx-countdown" },
-    { "type": "cx-card-grid" },
-    { "type": "cx-card-masonry" },
-    { "type": "cx-card-slider" },
-    { "type": "cx-product-slider" },
-    { "type": "cx-hero-primary" },
-    { "type": "cx-hero-feature" },
-    { "type": "cx-trustbuilders" },
-    { "type": "cx-tabs" },
-    { "type": "cx-accordion" },
-    { "type": "cx-content-metafields" },
-    { "type": "cx-lists" },
-    { "type": "cx-buttons" },
-    { "type": "cx-tables" },
-    { "type": "cx-custom-html" },
-    { "type": "@theme" },
-    { "type": "@app" }
-  ],
+  "name": "CX Container Master",
   "settings": [
+    { "type": "checkbox", "id": "no_gutter", "label": "No Gutter (Full Width)", "default": false },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "range", "id": "pt_d", "min": 0, "max": 100, "label": "Top Padding Desktop", "default": 40 },
+    { "type": "range", "id": "pb_d", "min": 0, "max": 100, "label": "Bottom Padding Desktop", "default": 40 },
+    { "type": "range", "id": "pt_m", "min": 0, "max": 100, "label": "Top Padding Mobile", "default": 20 },
+    { "type": "range", "id": "pb_m", "min": 0, "max": 100, "label": "Bottom Padding Mobile", "default": 20 }
+  ],
+  "blocks": [
     {
-      "type": "header",
-      "content": "t:cx_common.headers.container"
-    },
-    {
-      "type": "select",
-      "id": "top_spacing",
-      "label": "t:cx_common.settings.top_spacing.label",
-      "options": [
-        { "value": "none", "label": "t:options.none" },
-        { "value": "small", "label": "t:options.small" },
-        { "value": "medium", "label": "t:options.medium" },
-        { "value": "large", "label": "t:options.large" },
-        { "value": "larger", "label": "t:options.extra_large" }
-      ],
-      "default": "none"
-    },
-    {
-      "type": "select",
-      "id": "top_overhang",
-      "label": "Top overhang",
-      "default": "none",
-      "options": [
-        { "value": "none", "label": "None" },
-        { "value": "small", "label": "Small" },
-        { "value": "medium", "label": "Medium" },
-        { "value": "large", "label": "Large" }
+      "type": "heading",
+      "name": "CX Heading",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Heading", "default": "Heading Text" },
+        { "type": "range", "id": "size", "min": 20, "max": 80, "label": "Size", "default": 32 },
+        { "type": "color", "id": "color", "label": "Color", "default": "#000000" },
+        { "type": "select", "id": "align", "label": "Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" }
       ]
     },
     {
-      "type": "select",
-      "id": "layout_width",
-      "label": "t:cx_common.settings.layout_width.label",
-      "default": "full",
-      "options": [
-        { "value": "boxed", "label": "t:cx_common.settings.layout_width.options.boxed" },
-        { "value": "full", "label": "t:cx_common.settings.layout_width.options.full" }
+      "type": "split",
+      "name": "CX Split Feature",
+      "settings": [
+        { "type": "image_picker", "id": "img", "label": "Image" },
+        { "type": "select", "id": "pos", "label": "Position", "options": [{"value":"left","label":"Left"},{"value":"right","label":"Right"}], "default": "left" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Story" },
+        { "type": "richtext", "id": "desc", "label": "Desc", "default": "<p>Content</p>" }
       ]
     },
     {
-      "type": "select",
-      "id": "max_width",
-      "label": "t:cx_common.settings.max_width.label",
-      "default": "standard",
-      "options": [
-        { "value": "standard", "label": "t:cx_common.settings.max_width.options.standard" },
-        { "value": "wide", "label": "t:cx_common.settings.max_width.options.wide" },
-        { "value": "medium", "label": "t:cx_common.settings.max_width.options.medium" },
-        { "value": "narrow", "label": "t:cx_common.settings.max_width.options.narrow" },
-        { "value": "full", "label": "t:cx_common.settings.max_width.options.full" }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "container_alignment",
-      "label": "Container alignment",
-      "default": "center",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
-      ],
-      "info": "Best used with boxed layout + a narrower max width."
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color"
-    },
-    {
-      "type": "image_picker",
-      "id": "background_image",
-      "label": "Background image"
-    },
-    {
-      "type": "select",
-      "id": "background_image_fit",
-      "label": "Background fit",
-      "default": "none",
-      "options": [
-        { "value": "cover", "label": "Cover" },
-        { "value": "contain", "label": "Contain" },
-        { "value": "fill", "label": "Fill" },
-        { "value": "none", "label": "None" },
-        { "value": "scale-down", "label": "Scale down" }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "background_border_radius",
-      "label": "t:settings.border_radius",
-      "options": [
-        { "value": "0", "label": "None" },
-        { "value": "2", "label": "XL" },
-        { "value": "5", "label": "SM" },
-        { "value": "10", "label": "MD" },
-        { "value": "20", "label": "Large" },
-        { "value": "9999", "label": "Rounded" }
-      ],
-      "default": "0"
-    },
-    {
-      "type": "header",
-      "content": "t:cx_common.headers.shadow"
-    },
-    {
-      "type": "select",
-      "id": "drop_shadow",
-      "label": "t:cx_common.settings.drop_shadow.label",
-      "info": "t:cx_common.settings.drop_shadow.info",
-      "default": "none",
-      "options": [
-        { "value": "none", "label": "t:cx_common.settings.drop_shadow.options.none" },
-        { "value": "cx_default", "label": "t:cx_common.settings.drop_shadow.options.cx_default" },
-        { "value": "theme_popover", "label": "t:cx_common.settings.drop_shadow.options.theme_popover" },
-        { "value": "theme_drawer", "label": "t:cx_common.settings.drop_shadow.options.theme_drawer" },
-        { "value": "theme_button", "label": "t:cx_common.settings.drop_shadow.options.theme_button" }
-      ]
-    },
-    {
-      "type": "color",
-      "id": "gradient_end",
-      "label": "t:cx_common.settings.gradient_end.label",
-      "info": "t:cx_common.settings.gradient_end.info"
-    },
-    {
-      "type": "select",
-      "id": "gradient_direction",
-      "label": "t:settings.gradient_direction",
-      "options": [
-        { "value": "to top", "label": "t:cx_common.gradient_direction.to_top" },
-        { "value": "to right", "label": "t:cx_common.gradient_direction.to_right" },
-        { "value": "to bottom", "label": "t:cx_common.gradient_direction.to_bottom" },
-        { "value": "to left", "label": "t:cx_common.gradient_direction.to_left" },
-        { "value": "to top right", "label": "t:cx_common.gradient_direction.to_top_right" },
-        { "value": "to top left", "label": "t:cx_common.gradient_direction.to_top_left" },
-        { "value": "to bottom right", "label": "t:cx_common.gradient_direction.to_bottom_right" },
-        { "value": "to bottom left", "label": "t:cx_common.gradient_direction.to_bottom_left" }
-      ],
-      "default": "to bottom",
-      "info": "t:cx_common.settings.gradient_direction.info"
-    },
-    {
-      "type": "range",
-      "id": "top_padding",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "label": "Top padding",
-      "info": "Base (all breakpoints). Use Top padding (desktop) to override on large screens.",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "top_padding_desktop",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "label": "Top padding (desktop)",
-      "info": "Optional. Overrides Top padding on desktop only.",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "bottom_padding",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "label": "Bottom padding",
-      "info": "Base (all breakpoints). Use Bottom padding (desktop) to override on large screens.",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "bottom_padding_desktop",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "label": "Bottom padding (desktop)",
-      "info": "Optional. Overrides Bottom padding on desktop only.",
-      "default": 0
-    },
-    {
-      "type": "checkbox",
-      "id": "disable_desktop_background",
-      "label": "t:cx_card_masonry.settings.disable_desktop_background.label",
-      "default": false,
-      "info": "t:cx_card_masonry.settings.disable_desktop_background.info"
-    },
-    {
-      "type": "checkbox",
-      "id": "no_gutter",
-      "label": "No gutter",
-      "default": false,
-      "info": "When enabled, the inner container has no horizontal gutter at all breakpoints."
-    },
-    {
-      "type": "header",
-      "content": "t:cx_common.headers.accessibility_and_link"
-    },
-    {
-      "type": "url",
-      "id": "link",
-      "label": "t:cx_common.settings.link_optional.label",
-      "info": "t:cx_container.settings.link.info"
-    },
-    {
-      "type": "checkbox",
-      "id": "link_new_tab",
-      "label": "t:settings.open_new_tab",
-      "default": false,
-      "visible_if": "{{ block.settings.link != blank }}"
-    },
-    {
-      "type": "text",
-      "id": "link_label",
-      "label": "t:cx_container.settings.link_label.label",
-      "info": "t:cx_container.settings.link_label.info",
-      "visible_if": "{{ block.settings.link != blank }}"
-    },
-    {
-      "type": "header",
-      "content": "t:cx_common.headers.metrics"
-    },
-    {
-      "type": "text",
-      "id": "custom_id",
-      "label": "t:cx_common.settings.custom_id.label",
-      "default": "auto"
+      "type": "liquid",
+      "name": "Custom Liquid",
+      "settings": [ { "type": "liquid", "id": "custom_liquid", "label": "Code" } ]
     }
   ],
-  "presets": [
-    {
-      "name": "CX Container"
-    }
-  ]
+  "presets": [ { "name": "CX Container Master" } ]
 }
 {% endschema %}
